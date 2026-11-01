@@ -236,7 +236,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
     <div class="wrap namer">
       <div class="sec-head"><span class="kicker">Max Charles Davies, composer</span><h2>Inside the constraint</h2></div>
       <p class="intro">My rules give one answer, but most letters can be found in several note names. The table sets the limits; within them, I choose by ear.</p>
-      <p class="lead">Each letter below lists the notes it can become. A letter counts only if it begins a note name or is its second letter, as in <i>eS</i> or <i>mI</i>, and my own rules are always included. Change any of them and listen to the difference.</p>
+      <p class="lead">Each letter below lists the notes it can become. A to G always stay themselves, except that B can also be B♭, as in German. Other letters count only if they begin a note name or are its second letter, as in <i>eS</i> or <i>mI</i>, and my own rules are always included. Change any of them and listen to the difference.</p>
       <label for="xname" class="field-label">Your name</label>
       <div class="namer-row">
         <input id="xname" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="Max Charles Davies">
@@ -417,6 +417,9 @@ const NameMusic = (function(){
       return cache[ch] = out;
     }
     const L = PROXY[ch] || ch;
+    // A to G stay themselves: the Western letter names. The one exception is B, which can also be B-flat (the German B).
+    if ('ACDEFG'.includes(L)) { add(L, L, 'Letter name', 'The letter itself'); return cache[ch] = out; }
+    if (L === 'B') { add('B', 'B', 'Letter name', 'The letter itself'); add('Bb', 'B', 'German', 'The letter itself'); return cache[ch] = out; }
     const via = PROXY[ch] ? ` (${ch} as ${L})` : '';
     const begins = [], inside = [];
     // A letter counts only if it is one of the first two letters of the note name's first word.
