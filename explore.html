@@ -236,7 +236,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
     <div class="wrap namer">
       <div class="sec-head"><span class="kicker">Max Charles Davies, composer</span><h2>Inside the constraint</h2></div>
       <p class="intro">My rules give one answer, but most letters can be found in several note names. The table sets the limits; within them, I choose by ear.</p>
-      <p class="lead">Each letter below lists every note it can become: names that begin with it, names that contain it, and a few additions of my own. Change any of them and listen to the difference.</p>
+      <p class="lead">Each letter below lists the notes it can become. A letter counts only if it begins a note name or is its second letter, as in <i>eS</i> or <i>mI</i>, and my own rules are always included. Change any of them and listen to the difference.</p>
       <label for="xname" class="field-label">Your name</label>
       <div class="namer-row">
         <input id="xname" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="Max Charles Davies">
@@ -419,14 +419,19 @@ const NameMusic = (function(){
     const L = PROXY[ch] || ch;
     const via = PROXY[ch] ? ` (${ch} as ${L})` : '';
     const begins = [], inside = [];
+    // A letter counts only if it is one of the first two letters of the note name's first word.
+    const head = name => norm(name).toUpperCase().split(/[\s-]+/)[0].slice(0, 2);
     TABLE.forEach(([trad, cells]) => cells.forEach(([name, p]) => {
-      const n = norm(name).toUpperCase();
-      if (n.startsWith(L)) begins.push([name, p, trad]);
-      else if (n.includes(L)) inside.push([name, p, trad]);
+      const h = head(name);
+      if (h[0] === L) begins.push([name, p, trad]);
+      else if (h[1] === L) inside.push([name, p, trad]);
     }));
-    EXTRA.forEach(([name, p, trad]) => { if (norm(name).toUpperCase().includes(L)) inside.push([name, p, trad]); });
+    EXTRA.forEach(([name, p, trad]) => { const h = head(name); if (h[0] === L) begins.push([name, p, trad]); else if (h[1] === L) inside.push([name, p, trad]); });
     begins.forEach(([n, p, trad]) => add(p, mark(n, L), trad + via, `Begins with ${L}`));
-    inside.forEach(([n, p, trad]) => add(p, mark(n, L), trad + via, `${L} inside the name`));
+    inside.forEach(([n, p, trad]) => add(p, mark(n, L), trad + via, `${L} as the second letter`));
+    // My own rules always stay available (reY, for example, isn't in the first two letters).
+    const rule = NameMusic.MAP[L];
+    if (rule && !out.some(o => o.p === rule[0])) out.push({p:rule[0], labels:[rule[1]], sources:['My rule'], kind:'My rules'});
     return cache[ch] = out;
   }
 
