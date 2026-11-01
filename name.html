@@ -227,7 +227,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
       <details class="rules">
         <summary>How the mapping works</summary>
         <ol>
-          <li>Each letter takes the first note name that begins with it, reading a table of naming systems (English, German, Dutch, solfège, Byzantine, Japanese and Indian) left to right, top to bottom. So H is the German name for B, M is <i>Mi</i> (E), R is <i>Re</i> (D) and V is the Byzantine <i>Vu</i> (E).</li>
+          <li>Each letter takes the first note name that begins with it, reading a table of naming systems (English, German, Swedish, Dutch, solfège and Byzantine) left to right, top to bottom. I stop at the Byzantine row, because by then every letter that can appear has appeared, so the Japanese and Indian systems further down add nothing new. So H is the German name for B, M is <i>Mi</i> (E), R is <i>Re</i> (D) and V is the Byzantine <i>Vu</i> (E).</li>
           <li>Where a letter hides inside a note name, I use that: S is always E♭ (<i>eS</i>, the German name), O is <i>sOh</i> (G), U is <i>Ut</i> (C) and Y is <i>reY</i> (D).</li>
           <li>I is <i>mI</i> (E) or <i>tI</i> (B), whichever hasn't been heard yet in the name. If both or neither have, it avoids repeating the note just before it. Only if that doesn't decide it do you choose.</li>
           <li>The last four letters follow the same thinking. J began as a form of I, so it follows I's rule. Q is sounded as K, so it takes <i>Ke</i> (A). W is a double U, so it takes <i>Ut</i> (C). A double sharp is written as a small x, so X takes a sharpened note: F♯.</li>
@@ -259,11 +259,12 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 const NameMusic = (function(){
   const NS = 'http://www.w3.org/2000/svg';
   // First note name beginning with each letter, reading the chromatic naming table
-  // (English, German, Swedish, Dutch, Romance, Byzantine, Japanese, Indian) left to right, top to bottom.
+  // (English, German, Swedish, Dutch, solfège, Byzantine) left to right, top to bottom. The table stops at Byzantine:
+  // by then every letter that can appear has appeared, with T supplied by my addition ti.
   // Label shows that note name with the matched letter capitalised.
   const MAP = {A:['A','A'],B:['B','B'],C:['C','C'],D:['D','D'],E:['E','E'],F:['F','F'],G:['G','G'],
     H:['B','H'],K:['A','Ke'],L:['A','La'],M:['E','Mi'],N:['C','Ni'],P:['D','Pa'],R:['D','Re'],
-    T:['G','To'],V:['E','Vu'],Z:['B','Zo'],
+    T:['B','Ti'],V:['E','Vu'],Z:['B','Zo'],
     S:['Eb','eS'],  // my rule: S is always E-flat, from the German Es
     O:['G','sOh'],  // my rule: O from tonic sol-fa soh
     U:['C','Ut'],   // my rule: U from the medieval ut

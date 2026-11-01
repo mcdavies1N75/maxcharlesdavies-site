@@ -386,11 +386,12 @@ const WORKS = [{"title":"Tears, Idle Tears","year":"2026","dur":"","desc":"A set
 const NameMusic = (function(){
   const NS = 'http://www.w3.org/2000/svg';
   // First note name beginning with each letter, reading the chromatic naming table
-  // (English, German, Swedish, Dutch, Romance, Byzantine, Japanese, Indian) left to right, top to bottom.
+  // (English, German, Swedish, Dutch, solfège, Byzantine) left to right, top to bottom. The table stops at Byzantine:
+  // by then every letter that can appear has appeared, with T supplied by my addition ti.
   // Label shows that note name with the matched letter capitalised.
   const MAP = {A:['A','A'],B:['B','B'],C:['C','C'],D:['D','D'],E:['E','E'],F:['F','F'],G:['G','G'],
     H:['B','H'],K:['A','Ke'],L:['A','La'],M:['E','Mi'],N:['C','Ni'],P:['D','Pa'],R:['D','Re'],
-    T:['G','To'],V:['E','Vu'],Z:['B','Zo'],
+    T:['B','Ti'],V:['E','Vu'],Z:['B','Zo'],
     S:['Eb','eS'],  // my rule: S is always E-flat, from the German Es
     O:['G','sOh'],  // my rule: O from tonic sol-fa soh
     U:['C','Ut'],   // my rule: U from the medieval ut
