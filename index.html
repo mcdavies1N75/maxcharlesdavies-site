@@ -217,7 +217,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         </svg>
         <div class="stave-caption">
           <button class="btn" id="play" type="button" aria-describedby="stave-title"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play my name</span></button>
-          <span>The letters of my name, mapped to musical pitches. Each letter is matched to the first note name that begins with it, reading across the naming systems of English, German, Dutch, solfège, Byzantine, Japanese and Indian music, shown with the matched letter in capitals. Where a letter hides inside a note name, I use that too: S is always E♭ (<i>eS</i>), I can be <i>mI</i> or <i>tI</i>, O is <i>sOh</i> and U is <i>Ut</i>. X has no match, so it's a wild card: I chose F♯. This mapping gives pitch material only. Rhythm, harmony and form come later, from the more involved process of mining that material. <a href="#your-name">Try it with your name.</a></span>
+          <span>The letters of my name, mapped to musical pitches. Each letter is matched to the first note name that begins with it, reading across the naming systems of English, German, Dutch, solfège, Byzantine, Japanese and Indian music, shown with the matched letter in capitals. Where a letter hides inside a note name, I use that too: S is always E♭ (<i>eS</i>), I is <i>mI</i> or <i>tI</i>, whichever hasn't been heard yet (in my name both have, so I chose <i>tI</i>), O is <i>sOh</i> and U is <i>Ut</i>. X has no match, so it's a wild card: I chose F♯. This mapping gives pitch material only. Rhythm, harmony and form come later, from the more involved process of mining that material. <a href="#your-name">Try it with your name.</a></span>
         </div>
       </div>
 
@@ -416,16 +416,26 @@ const NameMusic = (function(){
   function words(text){
     return text.normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z\s]/g,'').split(/\s+/).filter(Boolean);
   }
-  // choices: {X:'F#', I:'B'} etc.
-  function resolve(ch, choices){
-    if (ch === 'I') { const p = choices.I || 'B'; return {p, label:I_OPTS[p], wild:false}; }
-    if (MAP[ch]) return {p:MAP[ch][0], label:MAP[ch][1], wild:false};
-    const p = choices[ch]; return {p: p || null, label: p ? pretty(p) : '?', wild:true};
+  // Work out every letter's pitch. choices: wild letters by letter ({X:'F#'}), undecided I's by occurrence ({'I#0':'B'}).
+  // I rule: mI (E) or tI (B), whichever hasn't been heard yet in the name; if both or neither have, it's a choice.
+  function analyse(ws, choices){
+    const heard = new Set(); let iCount = 0;
+    return ws.map(w => ({word:w, notes:[...w].map(ch => {
+      let r;
+      if (ch === 'I') {
+        const key = 'I#' + (iCount++), e = heard.has('E'), b = heard.has('B');
+        if (e && !b) r = {p:'B', label:'tI', auto:true};
+        else if (b && !e) r = {p:'E', label:'mI', auto:true};
+        else { const p = choices[key]; r = {p: p || null, label: p ? I_OPTS[p] : '?', wild: !p, chosen: !!p, iKey:key, both:e && b}; }
+      } else if (MAP[ch]) r = {p:MAP[ch][0], label:MAP[ch][1]};
+      else { const p = choices[ch]; r = {p: p || null, label: p ? pretty(p) : '?', wild: !p, chosen: !!p}; }
+      r.ch = ch; r.word = w; if (r.p) heard.add(r.p); return r;
+    })}));
   }
-  function draw(svg, ws, choices, perRow){
+  function draw(svg, an, perRow){
     [...svg.querySelectorAll(':scope > :not(title)')].forEach(n => n.remove());
     const rows = []; let cur = [], n = 0;
-    ws.forEach(w => { if (cur.length && n + w.length > perRow) { rows.push(cur); cur = []; n = 0; } cur.push(w); n += w.length; });
+    an.forEach(w => { if (cur.length && n + w.notes.length > perRow) { rows.push(cur); cur = []; n = 0; } cur.push(w); n += w.notes.length; });
     if (cur.length) rows.push(cur);
     const gap = 12, rowH = 165, spacing = 50; const notes = []; let i = 0, maxW = 300;
     rows.forEach((row, ri) => {
@@ -433,9 +443,9 @@ const NameMusic = (function(){
       const clef = el('text', {class:'clef', x:6, y:bottom + 10}); clef.textContent = '\u{1D11E}'; g0.appendChild(clef);
       let x = 84;
       row.forEach((w, wi) => {
-        [...w].forEach(ch => {
-          const r = resolve(ch, choices);
-          const g = el('g', {class:'note' + (r.wild ? (r.p ? ' chosen' : ' wild') : '')}); g.style.setProperty('--i', i);
+        w.notes.forEach(r => {
+          const ch = r.ch;
+          const g = el('g', {class:'note' + (r.wild ? ' wild' : r.chosen ? ' chosen' : '')}); g.style.setProperty('--i', i);
           const y = bottom - (r.p ? STEP[r.p] : 4) * gap / 2;
           if (r.p && r.p.length > 1) { const acc = el('text', {class:'acc', x:x - 21, y:y + 5}); acc.textContent = r.p[1] === '#' ? '♯' : '♭'; g.appendChild(acc); }
           g.appendChild(el('ellipse', {class:'head' + (r.p ? '' : ' wildhead'), cx:x, cy:y, rx:7.6, ry:5.2, transform:`rotate(-20 ${x} ${y})`}));
@@ -479,16 +489,16 @@ const NameMusic = (function(){
     });
     setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); busy = false; span.textContent = idleText; }, (t - ctx.currentTime) * 1000 + 400);
   }
-  return {MAP, PITCHES, pretty, words, draw, play};
+  return {MAP, PITCHES, pretty, words, analyse, draw, play};
 })();
 
 /* Hero: my own name. X is a wild card: I chose F-sharp. */
 (function(){
   const svg = document.getElementById('stave');
   const narrow = matchMedia('(max-width: 560px)');
-  const ws = NameMusic.words('Max Charles Davies'), choices = {X:'F#', I:'B'};
+  const ws = NameMusic.words('Max Charles Davies'), choices = {X:'F#', 'I#0':'B'};
   let notes = [];
-  const layout = () => { notes = NameMusic.draw(svg, ws, choices, narrow.matches ? 8 : 20); };
+  const layout = () => { notes = NameMusic.draw(svg, NameMusic.analyse(ws, choices), narrow.matches ? 8 : 20); };
   layout(); narrow.addEventListener('change', layout);
   document.getElementById('play').addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play my name'));
 })();
@@ -498,24 +508,30 @@ const NameMusic = (function(){
   const input = document.getElementById('yourname'), svg = document.getElementById('stave2');
   const box = document.getElementById('choices'), btn = document.getElementById('play2');
   const narrow = matchMedia('(max-width: 560px)');
-  const choices = {I:'B'}; let notes = [];
+  const choices = {}; let notes = [];
+  const cap = s => s.charAt(0) + s.slice(1).toLowerCase();
   function update(){
     const ws = NameMusic.words(input.value);
-    const letters = new Set(ws.join(''));
-    const wild = [...letters].filter(c => !NameMusic.MAP[c] && c !== 'I').sort();
+    const an = NameMusic.analyse(ws, choices);
+    const all = an.flatMap(w => w.notes);
     let html = '';
-    if (letters.has('I')) html += `<div class="choice"><label for="pick-I">I can be <i>mI</i> (E) or <i>tI</i> (B). Which would you like?</label>
-      <select id="pick-I" data-letter="I"><option value="B"${choices.I === 'B' ? ' selected' : ''}>tI (B)</option><option value="E"${choices.I === 'E' ? ' selected' : ''}>mI (E)</option></select></div>`;
-    wild.forEach(c => {
+    const ord = ['first','second','third','fourth','fifth'];
+    an.forEach(w => { const is = w.notes.filter(r => r.ch === 'I'); is.forEach((r, k) => r.which = is.length > 1 ? `The ${ord[k] || (k + 1) + 'th'} I in ${cap(w.word)}` : `I in ${cap(w.word)}`); });
+    all.filter(r => r.iKey && (r.wild || r.chosen)).forEach(r => {
+      const why = r.both ? 'E and B have both been heard already' : 'neither E nor B has been heard yet';
+      html += `<div class="choice${choices[r.iKey] ? '' : ' open'}"><label for="pick-${r.iKey.replace('#','-')}">${r.which}: ${why}. Would you like <i>mI</i> (E) or <i>tI</i> (B)?</label>
+        <select id="pick-${r.iKey.replace('#','-')}" data-key="${r.iKey}"><option value="">Choose</option><option value="E"${choices[r.iKey] === 'E' ? ' selected' : ''}>mI (E)</option><option value="B"${choices[r.iKey] === 'B' ? ' selected' : ''}>tI (B)</option></select></div>`;
+    });
+    [...new Set(all.filter(r => !r.iKey && (r.wild || r.chosen)).map(r => r.ch))].sort().forEach(c => {
       html += `<div class="choice${choices[c] ? '' : ' open'}"><label for="pick-${c}">${c} doesn't map. What note would you like?</label>
-        <select id="pick-${c}" data-letter="${c}"><option value="">Choose a note</option>${NameMusic.PITCHES.map(p => `<option value="${p}"${choices[c] === p ? ' selected' : ''}>${NameMusic.pretty(p)}</option>`).join('')}</select></div>`;
+        <select id="pick-${c}" data-key="${c}"><option value="">Choose a note</option>${NameMusic.PITCHES.map(p => `<option value="${p}"${choices[c] === p ? ' selected' : ''}>${NameMusic.pretty(p)}</option>`).join('')}</select></div>`;
     });
     box.innerHTML = html;
-    notes = ws.length ? NameMusic.draw(svg, ws, choices, narrow.matches ? 8 : 20) : [];
-    if (!ws.length) [...svg.querySelectorAll(':scope > :not(title)')].forEach(n => n.remove());
+    if (ws.length) notes = NameMusic.draw(svg, an, narrow.matches ? 8 : 20);
+    else { notes = []; [...svg.querySelectorAll(':scope > :not(title)')].forEach(n => n.remove()); }
     btn.disabled = !ws.length;
   }
-  box.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; if (s.value) choices[s.dataset.letter] = s.value; else delete choices[s.dataset.letter]; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
+  box.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; if (s.value) choices[s.dataset.key] = s.value; else delete choices[s.dataset.key]; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
   input.addEventListener('input', update);
   narrow.addEventListener('change', update);
   btn.addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play'));
