@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Music&text=%F0%9D%84%9E%E2%99%AD%E2%99%AF&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Music&text=%F0%9D%84%9E%E2%99%AD%E2%99%AE%E2%99%AF&display=swap" rel="stylesheet">
 <style>
 :root{
   /* Layout idea: an engraved score page. One bold moment (the name as a melody on a stave), everything else set quietly in columns like a programme book. */
@@ -433,6 +433,7 @@ const NameMusic = (function(){
     an.forEach(w => { if (cur.length && n + w.notes.length > perRow) { rows.push(cur); cur = []; n = 0; } cur.push(w); n += w.notes.length; });
     if (cur.length) rows.push(cur);
     const gap = 12, rowH = 165, spacing = 50; const notes = []; let i = 0, maxW = 300;
+    const altered = {}; // staff position -> accidental last shown there, so a later natural gets a natural sign
     rows.forEach((row, ri) => {
       const bottom = 104 + ri * rowH; const g0 = el('g', {}); svg.appendChild(g0);
       const clef = el('text', {class:'clef', x:6, y:bottom + 10}); clef.textContent = '\u{1D11E}'; g0.appendChild(clef);
@@ -442,7 +443,13 @@ const NameMusic = (function(){
           const ch = r.ch;
           const g = el('g', {class:'note' + (r.wild ? ' wild' : r.chosen ? ' chosen' : '')}); g.style.setProperty('--i', i);
           const y = bottom - (r.p ? STEP[r.p] : 4) * gap / 2;
-          if (r.p && r.p.length > 1) { const acc = el('text', {class:'acc', x:x - 21, y:y + 5}); acc.textContent = r.p[1] === '#' ? '♯' : '♭'; g.appendChild(acc); }
+          if (r.p) {
+            const pos = STEP[r.p], alt = r.p.length > 1 ? r.p[1] : '';
+            let sign = '';
+            if (alt) { sign = alt === '#' ? '♯' : '♭'; altered[pos] = alt; }
+            else if (altered[pos]) { sign = '♮'; altered[pos] = ''; }
+            if (sign) { const acc = el('text', {class:'acc', x:x - 21, y:y + 5}); acc.textContent = sign; g.appendChild(acc); }
+          }
           g.appendChild(el('ellipse', {class:'head' + (r.p ? '' : ' wildhead'), cx:x, cy:y, rx:7.6, ry:5.2, transform:`rotate(-20 ${x} ${y})`}));
           const lbl = el('text', {class:'lbl', x:x, y:bottom + 30}); lbl.textContent = ch; g.appendChild(lbl);
           const pt = el('text', {class:'pitch', x:x, y:bottom + 48}); pt.textContent = r.label; g.appendChild(pt);
