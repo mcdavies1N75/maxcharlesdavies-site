@@ -482,13 +482,21 @@ const NameMusic = (function(){
     count.textContent = items.length ? `Your name can be heard ${total.toLocaleString('en-GB')} different ways. ★ marks the note my rules would choose.` : '';
     document.getElementById('xplay').disabled = !items.length;
   }
+  // Pick up the name from the simple page (?name=...) or from earlier in this visit, and carry it back.
+  function carry(){
+    const v = input.value.trim();
+    document.querySelectorAll('a[href^="name.html"]').forEach(a => a.href = v ? 'name.html?name=' + encodeURIComponent(v) : 'name.html');
+    try { sessionStorage.setItem('mcd-name', v); } catch (e) {}
+  }
+  try { const q = new URLSearchParams(location.search).get('name') || sessionStorage.getItem('mcd-name'); if (q) input.value = q.slice(0, 40); } catch (e) {}
+  input.addEventListener('input', carry);
   cards.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; picks[s.dataset.k] = +s.value; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
   input.addEventListener('input', update);
   narrow.addEventListener('change', update);
   document.getElementById('xplay').addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play'));
   document.getElementById('xshuffle').addEventListener('click', () => { items.forEach(it => picks[it.k] = Math.floor(Math.random() * it.opts.length)); update(); });
   document.getElementById('xreset').addEventListener('click', () => { picks = {}; update(); });
-  update();
+  update(); carry();
 })();
 
 </script>

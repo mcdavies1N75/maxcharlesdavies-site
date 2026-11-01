@@ -398,10 +398,17 @@ const NameMusic = (function(){
     btn.disabled = !ws.length;
   }
   box.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; if (s.value) choices[s.dataset.key] = s.value; else delete choices[s.dataset.key]; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
-  input.addEventListener('input', update);
+  // Carry the name to the deeper page (and remember it for this visit).
+  function carry(){
+    const v = input.value.trim();
+    document.querySelectorAll('a[href^="explore.html"]').forEach(a => a.href = v ? 'explore.html?name=' + encodeURIComponent(v) : 'explore.html');
+    try { sessionStorage.setItem('mcd-name', v); } catch (e) {}
+  }
+  try { const q = new URLSearchParams(location.search).get('name') || sessionStorage.getItem('mcd-name'); if (q) input.value = q.slice(0, 40); } catch (e) {}
+  input.addEventListener('input', () => { update(); carry(); });
   narrow.addEventListener('change', update);
   btn.addEventListener('click', e => { NameMusic.play(() => notes, e.currentTarget, 'Play'); const c = document.getElementById('cta'); setTimeout(() => { c.classList.remove('nudge'); void c.offsetWidth; c.classList.add('nudge'); }, notes.length * 360 + 600); });
-  update();
+  update(); carry();
 })();
 
 
