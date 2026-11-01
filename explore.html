@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inside the Constraint, by Max Charles Davies</title>
+<meta name="description" content="Explore every note each letter of your name can become, in composer Max Charles Davies' letter-to-pitch system.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Music&text=%F0%9D%84%9E%E2%99%AD%E2%99%AE%E2%99%AF&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout idea: an engraved score page. One bold moment (the name as a melody on a stave), everything else set quietly in columns like a programme book. */
+  --paper:#F3F4F1;
+  --ink:#15191F;
+  --muted:#596070;
+  --rule:#CDD2D8;
+  --accent:#2A4F86;
+  --accent-soft:#E2E8F1;
+  --font-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --measure:65ch;
+  --step--1:clamp(.82rem,.8rem + .1vw,.88rem);
+  --step-0:clamp(1rem,.97rem + .15vw,1.08rem);
+  --step-1:clamp(1.2rem,1.1rem + .4vw,1.4rem);
+  --step-2:clamp(1.6rem,1.4rem + .9vw,2.2rem);
+  --step-3:clamp(2.4rem,1.8rem + 3vw,4.6rem);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1218;--ink:#E7E9EE;--muted:#9AA3B2;--rule:#2A313C;--accent:#8FB2E8;--accent-soft:#18222F;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1218;--ink:#E7E9EE;--muted:#9AA3B2;--rule:#2A313C;--accent:#8FB2E8;--accent-soft:#18222F;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.5rem}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:var(--step-0);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:.18em}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+h1,h2,h3{font-family:var(--font-display);font-weight:500;text-wrap:balance;margin:0;line-height:1.1}
+h2{font-size:var(--step-2)}
+h3{font-size:var(--step-1)}
+em,i{font-style:italic}
+.wrap{max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+.prose p{max-width:var(--measure);margin:0 0 1em}
+
+/* nav */
+.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;gap:1.5rem;min-height:3.5rem}
+.brand{font-family:var(--font-display);font-size:1.05rem;color:var(--ink);text-decoration:none;white-space:nowrap}
+.top nav{display:flex;gap:1.1rem;overflow-x:auto;margin-left:auto;scrollbar-width:none}
+.top nav a{color:var(--muted);text-decoration:none;font-size:var(--step--1);white-space:nowrap;padding:.4rem 0;letter-spacing:.02em}
+.top nav a:hover{color:var(--ink)}
+@media (max-width:640px){.brand{display:none}.top nav{margin-left:0}}
+
+/* hero */
+.hero{padding:clamp(2.5rem,6vw,5rem) 0 clamp(2rem,4vw,3rem);border-bottom:1px solid var(--rule)}
+.hero h1{font-size:var(--step-3);font-weight:400;letter-spacing:-.01em}
+.hero h1 span{display:block;font-family:var(--font-body);font-size:var(--step--1);letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;font-weight:500}
+.thesis{font-family:var(--font-display);font-style:italic;font-size:var(--step-1);max-width:34ch;margin:1.2rem 0 0;line-height:1.35}
+.stave-block{margin-top:clamp(2rem,4vw,3rem)}
+.stave{width:100%;height:auto;display:block;color:var(--ink)}
+.stave .line{stroke:var(--ink);stroke-width:1}
+.stave .bar{stroke:var(--ink);stroke-width:1.2}
+.stave .head{fill:none;stroke:var(--ink);stroke-width:2.6}
+.stave .lbl{font-family:var(--font-body);font-size:13px;fill:var(--muted);text-anchor:middle;letter-spacing:.04em}
+.stave .pitch{font-family:var(--font-display);font-style:italic;font-size:13px;fill:var(--accent);text-anchor:middle}
+.stave .clef{font-family:"Noto Music","Bravura","Segoe UI Symbol",serif;font-size:76px;fill:var(--ink)}
+.stave .note{transition:transform .15s}
+  .stave .acc{font-family:"Noto Music","Segoe UI Symbol",serif;font-size:26px;fill:var(--ink)}
+.stave .note.on .acc{fill:var(--accent)}
+.stave .chosen .pitch{fill:var(--muted)}
+.stave .note.on .flat{fill:var(--accent)}
+  .stave .wildhead{stroke:var(--muted);stroke-dasharray:3 3;stroke-width:1.6}
+.stave .note.on .head{stroke:var(--accent);fill:var(--accent)}
+.stave .note.on .lbl{fill:var(--accent)}
+@media (prefers-reduced-motion: no-preference){
+  #stave .note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 45ms + 150ms)}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+.stave-caption{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;margin-top:.9rem;color:var(--muted);font-size:var(--step--1)}
+.btn{font:inherit;font-size:var(--step--1);font-weight:500;color:var(--paper);background:var(--ink);border:0;border-radius:999px;padding:.5rem 1rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
+.btn:hover{background:var(--accent)}
+.btn svg{width:.8em;height:.8em;fill:currentColor}
+.hero-links{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin-top:1.75rem;font-size:var(--step--1)}
+
+/* sections */
+section{padding:clamp(3rem,6vw,5rem) 0;border-bottom:1px solid var(--rule)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr);gap:.5rem;margin-bottom:2rem}
+.sec-head .kicker{font-size:var(--step--1);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.two{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem}
+@media (min-width:900px){.two{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:4rem}}
+.aside{border-left:2px solid var(--accent);padding-left:1.25rem;font-size:var(--step--1);color:var(--muted);align-self:start}
+.aside h3{font-size:1.05rem;color:var(--ink);margin-bottom:.6rem}
+.aside ul{margin:0;padding:0;list-style:none;display:grid;gap:.35rem}
+
+/* threads */
+.threads{display:grid;grid-template-columns:minmax(0,1fr);gap:2.5rem}
+@media (min-width:860px){.threads{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5rem}}
+.thread{display:flex;flex-direction:column;gap:.9rem}
+.thread .num{font-family:var(--font-display);font-size:2.6rem;line-height:1;color:var(--accent);font-style:italic}
+.thread p{margin:0;max-width:var(--measure)}
+.thread ul{list-style:none;margin:0;padding:.9rem 0 0;border-top:1px solid var(--rule);display:grid;gap:.4rem;font-size:var(--step--1)}
+.thread li{display:flex;justify-content:space-between;gap:1rem}
+.thread li a{font-family:var(--font-display);font-style:italic;font-size:1.02rem;text-decoration:none;color:var(--ink)}
+.thread li a:hover{color:var(--accent);text-decoration:underline}
+.thread li span{color:var(--muted);font-variant-numeric:tabular-nums}
+.research-note{margin-top:2.5rem;max-width:var(--measure);color:var(--muted)}
+
+/* performances */
+.perf{list-style:none;margin:0;padding:0;display:grid}
+.perf li{display:grid;grid-template-columns:4.5rem minmax(0,1fr);gap:1rem;padding:.85rem 0;border-top:1px solid var(--rule)}
+.perf .y{font-variant-numeric:tabular-nums;color:var(--muted);font-size:var(--step--1);padding-top:.15rem}
+.perf .w{font-family:var(--font-display);font-style:italic;font-size:1.1rem}
+.perf .d{color:var(--muted);font-size:var(--step--1)}
+@media (min-width:860px){.perf{grid-template-columns:1fr 1fr;column-gap:3rem}}
+
+/* works */
+.controls{display:grid;gap:1rem;margin-bottom:1.5rem}
+.search{display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center}
+.search input[type=search]{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--muted);padding:.4rem 0;min-width:min(100%,18rem);flex:1 1 14rem}
+.search input[type=search]::placeholder{color:var(--muted)}
+.search label.chk{display:flex;align-items:center;gap:.45rem;font-size:var(--step--1);color:var(--muted);cursor:pointer}
+.search input[type=checkbox]{accent-color:var(--accent);width:1rem;height:1rem}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{font:inherit;font-size:var(--step--1);color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:999px;padding:.3rem .8rem;cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .n{color:inherit;opacity:.6;margin-left:.3rem;font-variant-numeric:tabular-nums}
+.count{font-size:var(--step--1);color:var(--muted)}
+.works{border-top:1px solid var(--ink)}
+.work{border-bottom:1px solid var(--rule)}
+.work summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:5.2rem minmax(0,1fr) auto;gap:1rem;align-items:baseline;padding:.85rem 0}
+.work summary::-webkit-details-marker{display:none}
+.work summary:hover .t{color:var(--accent)}
+.work .yr{font-variant-numeric:tabular-nums;font-size:var(--step--1);color:var(--muted)}
+.work .t{font-family:var(--font-display);font-style:italic;font-size:1.15rem;line-height:1.3}
+.work .sub{display:block;font-family:var(--font-body);font-style:normal;font-size:var(--step--1);color:var(--muted);margin-top:.15rem}
+.work .badges{display:flex;gap:.35rem;align-items:center;white-space:nowrap}
+.badge{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1px solid currentColor;border-radius:3px;padding:.05rem .35rem}
+.badge.new{color:var(--paper);background:var(--accent);border-color:var(--accent)}
+.work .tog{width:.7rem;height:.7rem;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg) translateY(-3px);margin-left:.5rem;transition:transform .2s}
+.work[open] .tog{transform:rotate(225deg)}
+.work .body{padding:0 0 1.4rem 6.2rem;display:grid;gap:.9rem;max-width:calc(var(--measure) + 6.2rem)}
+.work .body p{margin:0}
+.work .forces{margin:0;padding:0;list-style:none;font-size:var(--step--1);color:var(--muted);display:grid;gap:.2rem;overflow-wrap:anywhere}
+.work .listen{display:flex;flex-wrap:wrap;gap:.5rem}
+.work .listen a{font-size:var(--step--1);text-decoration:none;border:1px solid var(--accent);border-radius:999px;padding:.2rem .75rem}
+.work .listen a:hover{background:var(--accent);color:var(--paper)}
+.work .ph{font-size:var(--step--1)}
+.work .ph h4{margin:0 0 .35rem;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.work .ph ul{margin:0;padding:0;list-style:none;display:grid;gap:.4rem}
+.work .ph li{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:.75rem}
+.work .ph .dt{font-variant-numeric:tabular-nums;color:var(--muted)}
+.work.flash summary{background:var(--accent-soft)}
+@media (max-width:640px){
+  .work summary{grid-template-columns:3.4rem minmax(0,1fr) auto;gap:.6rem}
+  .work .badges .badge{display:none}
+  .work .body{padding-left:0}
+  .work .ph li{grid-template-columns:minmax(0,1fr);gap:0}
+}
+.empty{padding:2rem 0;color:var(--muted)}
+.lead{max-width:var(--measure);margin:0 0 1rem}
+.rules{max-width:var(--measure);margin:0 0 1.75rem;font-size:var(--step--1);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:.6rem 0}
+.rules summary{cursor:pointer;font-weight:500;color:var(--accent)}
+.rules ol{margin:.75rem 0 .5rem;padding-left:1.25rem;display:grid;gap:.5rem}
+.rules p{margin:0;color:var(--muted)}
+.namer{display:grid;gap:1rem}
+.field-label{font-size:var(--step--1);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.namer-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.namer-row input{font-family:var(--font-display);font-size:var(--step-2);color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ink);padding:.2rem 0;flex:1 1 16rem;min-width:0}
+.btn:disabled{opacity:.4;cursor:default}
+.choices{display:grid;gap:.5rem}
+.choice{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;font-size:var(--step--1);padding:.55rem .8rem;border-left:2px solid var(--rule);background:transparent}
+.choice.open{border-left-color:var(--accent);background:var(--accent-soft)}
+.choice select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:.25rem .5rem}
+.stave .wild .pitch{fill:var(--accent)}
+
+/* teaching + contact */
+.facts{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+.facts li{padding-left:1rem;border-left:1px solid var(--rule)}
+.contact{display:grid;gap:1.5rem}
+.contact .mail{font-family:var(--font-display);font-size:var(--step-2);word-break:break-word}
+.contact .mail a{text-decoration:none;color:var(--ink)}
+.contact .mail a:hover{color:var(--accent)}
+.social{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem}
+footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
+.cta-wrap{display:grid;gap:.6rem;justify-items:start;margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--rule)}
+.cta{display:inline-flex;align-items:center;gap:.9rem;font-family:var(--font-display);font-size:var(--step-2);line-height:1.1;color:var(--paper);background:var(--accent);text-decoration:none;border-radius:999px;padding:1.1rem 2.2rem}
+.cta:hover{background:var(--ink);color:var(--paper)}
+.cta .arr{font-family:var(--font-body);font-size:.8em;transition:transform .2s}
+.cta:hover .arr{transform:translateX(4px)}
+.cta-note{font-size:var(--step--1);color:var(--muted);margin:0}
+@media (max-width:560px){.cta{width:100%;justify-content:center;padding:1rem 1.2rem}}
+@media (prefers-reduced-motion: no-preference){.cta.nudge{animation:nudge 1.2s ease 2}@keyframes nudge{0%,100%{transform:none}50%{transform:scale(1.04)}}}
+.back-simple{margin:1.5rem 0 0;font-size:var(--step--1)}
+.intro{font-family:var(--font-display);font-style:italic;font-size:var(--step-1);max-width:40ch;margin:0 0 1rem;line-height:1.35}
+.tools{display:flex;flex-wrap:wrap;gap:.5rem}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.btn.ghost:hover{border-color:var(--ink);background:transparent}
+.count{font-size:var(--step--1);color:var(--muted);margin:0}
+.cards{display:grid;gap:1.25rem}
+.card-word{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.6rem}
+.card-word h3{grid-column:1/-1;font-size:1.15rem;margin:.4rem 0 0}
+.card{border:1px solid var(--rule);border-radius:6px;padding:.6rem .7rem;display:grid;gap:.45rem}
+.card.changed{border-color:var(--accent);background:var(--accent-soft)}
+.card label{display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
+.card .big{font-family:var(--font-display);font-size:1.7rem;line-height:1}
+.card .n{font-size:.75rem;color:var(--muted)}
+.card select{width:100%;font:inherit;font-size:.85rem;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:.3rem .4rem}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html">Max Charles Davies</a>
+    <nav aria-label="Sections">
+      <a href="index.html#about">About</a>
+      <a href="index.html#research">Research</a>
+      
+      <a href="index.html#performances">Performances</a>
+      <a href="index.html#works">Works</a>
+      <a href="index.html#teaching">Teaching</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+<main id="top">
+  <section id="explore" style="border-bottom:0">
+    <div class="wrap namer">
+      <div class="sec-head"><span class="kicker">Max Charles Davies, composer</span><h2>Inside the constraint</h2></div>
+      <p class="intro">My rules give one answer, but most letters can be found in several note names. The table sets the limits; within them, I choose by ear.</p>
+      <p class="lead">Each letter below lists every note it can become: names that begin with it, names that contain it, and a few additions of my own. Change any of them and listen to the difference.</p>
+      <label for="xname" class="field-label">Your name</label>
+      <div class="namer-row">
+        <input id="xname" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="Max Charles Davies">
+        <button class="btn" id="xplay" type="button"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play</span></button>
+      </div>
+      <div class="tools"><button class="btn ghost" id="xshuffle" type="button">Surprise me</button><button class="btn ghost" id="xreset" type="button">Back to my rules</button></div>
+      <p id="xcount" class="count" aria-live="polite"></p>
+      <svg class="stave" id="stave3" role="img" aria-label="The name written as notes on a stave"><title>The name written as notes on a stave</title></svg>
+      <div id="cards" class="cards"></div>
+      <p class="back-simple"><a href="name.html">Back to the simple version</a></p>
+      <div class="cta-wrap">
+        <a class="cta" id="cta" href="index.html">Explore my music <span class="arr" aria-hidden="true">→</span></a>
+        <p class="cta-note">Works, recordings and research on my homepage</p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">© 2026 Max Charles Davies</div></footer>
+<script>
+/* ---------- Name to music (Max's method) ---------- */
+const NameMusic = (function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  // First note name beginning with each letter, reading the chromatic naming table
+  // (English, German, Swedish, Dutch, Romance, Byzantine, Japanese, Indian) left to right, top to bottom.
+  // Label shows that note name with the matched letter capitalised.
+  const MAP = {A:['A','A'],B:['B','B'],C:['C','C'],D:['D','D'],E:['E','E'],F:['F','F'],G:['G','G'],
+    H:['B','H'],K:['A','Ke'],L:['A','La'],M:['E','Mi'],N:['C','Ni'],P:['D','Pa'],R:['D','Re'],
+    T:['G','To'],V:['E','Vu'],Z:['B','Zo'],
+    S:['Eb','eS'],  // my rule: S is always E-flat, from the German Es
+    O:['G','sOh'],  // my rule: O from tonic sol-fa soh
+    U:['C','Ut'],   // my rule: U from the medieval ut
+    Y:['D','reY'],  // my rule: Y from rey
+    Q:['A','Ke'],   // Q is sounded as K
+    W:['C','Ut'],   // W is a double U
+    X:['F#','F\u266F']}; // x is the sign for a double sharp, so X takes a sharpened note
+  const I_OPTS = {B:'tI', E:'mI'}; // my rule: I can be mI or tI
+  const PITCHES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+  const STEP = {C:5,'C#':5,Db:6,D:6,'D#':6,Eb:7,E:7,F:8,'F#':8,Gb:9,G:9,'G#':9,Ab:3,A:3,'A#':3,Bb:4,B:4};
+  const MIDI = {C:72,'C#':73,Db:73,D:74,'D#':75,Eb:75,E:76,F:77,'F#':78,Gb:78,G:79,'G#':80,Ab:68,A:69,'A#':70,Bb:70,B:71};
+  const pretty = p => p.replace('#','♯').replace(/^([A-G])b$/,'$1♭');
+  const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+  function words(text){
+    return text.normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z\s]/g,'').split(/\s+/).filter(Boolean);
+  }
+  // Work out every letter's pitch. choices: wild letters by letter ({X:'F#'}), undecided I's by occurrence ({'I#0':'B'}).
+  // I rule: mI (E) or tI (B), whichever hasn't been heard yet in the name. If both or neither have,
+  // avoid repeating the note just before it. Only if that doesn't decide it is it a choice.
+  function analyse(ws, choices){
+    const heard = new Set(); let iCount = 0, prev = null;
+    return ws.map(w => ({word:w, notes:[...w].map(ch => {
+      let r;
+      if (ch === 'I' || ch === 'J') { // J began as a form of I, so it follows I's rule
+        const key = 'I#' + (iCount++), e = heard.has('E'), b = heard.has('B');
+        if (e && !b) r = {p:'B', label:'tI', auto:true};
+        else if (b && !e) r = {p:'E', label:'mI', auto:true};
+        else if (prev === 'E') r = {p:'B', label:'tI', auto:true};
+        else if (prev === 'B') r = {p:'E', label:'mI', auto:true};
+        else { const p = choices[key]; r = {p: p || null, label: p ? I_OPTS[p] : '?', wild: !p, chosen: !!p, iKey:key, both:e && b, hasPrev: prev !== null}; }
+      } else if (MAP[ch]) r = {p:MAP[ch][0], label:MAP[ch][1]};
+      else { const p = choices[ch]; r = {p: p || null, label: p ? pretty(p) : '?', wild: !p, chosen: !!p}; }
+      r.ch = ch; r.word = w; if (r.p) heard.add(r.p); prev = r.p; return r;
+    })}));
+  }
+  function draw(svg, an, perRow){
+    [...svg.querySelectorAll(':scope > :not(title)')].forEach(n => n.remove());
+    const rows = []; let cur = [], n = 0;
+    an.forEach(w => { if (cur.length && n + w.notes.length > perRow) { rows.push(cur); cur = []; n = 0; } cur.push(w); n += w.notes.length; });
+    if (cur.length) rows.push(cur);
+    const gap = 12, rowH = 165, spacing = 50; const notes = []; let i = 0, maxW = 300;
+    const altered = {}; // staff position -> accidental last shown there, so a later natural gets a natural sign
+    rows.forEach((row, ri) => {
+      const bottom = 104 + ri * rowH; const g0 = el('g', {}); svg.appendChild(g0);
+      const clef = el('text', {class:'clef', x:6, y:bottom + 10}); clef.textContent = '\u{1D11E}'; g0.appendChild(clef);
+      let x = 84;
+      row.forEach((w, wi) => {
+        w.notes.forEach(r => {
+          const ch = r.ch;
+          const g = el('g', {class:'note' + (r.wild ? ' wild' : r.chosen ? ' chosen' : '')}); g.style.setProperty('--i', i);
+          const y = bottom - (r.p ? STEP[r.p] : 4) * gap / 2;
+          if (r.p) {
+            const pos = STEP[r.p], alt = r.p.length > 1 ? r.p[1] : '';
+            let sign = '';
+            if (alt) { sign = alt === '#' ? '♯' : '♭'; altered[pos] = alt; }
+            else if (altered[pos]) { sign = '♮'; altered[pos] = ''; }
+            if (sign) { const acc = el('text', {class:'acc', x:x - 21, y:y + 5}); acc.textContent = sign; g.appendChild(acc); }
+          }
+          g.appendChild(el('ellipse', {class:'head' + (r.p ? '' : ' wildhead'), cx:x, cy:y, rx:7.6, ry:5.2, transform:`rotate(-20 ${x} ${y})`}));
+          const lbl = el('text', {class:'lbl', x:x, y:bottom + 30}); lbl.textContent = ch; g.appendChild(lbl);
+          const pt = el('text', {class:'pitch', x:x, y:bottom + 48}); pt.textContent = r.label; if (r.label.length > 6) { pt.setAttribute('textLength', 46); pt.setAttribute('lengthAdjust', 'spacingAndGlyphs'); } g.appendChild(pt);
+          svg.appendChild(g); notes.push({g, f: r.p ? 440 * Math.pow(2, (MIDI[r.p] - 69) / 12) : null, wordEnd:false}); x += spacing; i++;
+        });
+        notes[notes.length - 1].wordEnd = true;
+        const bx = x - spacing/2 + 4;
+        g0.appendChild(el('line', {class:'bar', x1:bx, x2:bx, y1:bottom - 4*gap, y2:bottom}));
+        if (ri === rows.length - 1 && wi === row.length - 1) g0.appendChild(el('line', {class:'bar', x1:bx+5, x2:bx+5, y1:bottom - 4*gap, y2:bottom, 'stroke-width':4}));
+        x += 10;
+      });
+      const rw = x - spacing/2 + 4; maxW = Math.max(maxW, rw + 10);
+      for (let k = 0; k < 5; k++) g0.insertBefore(el('line', {class:'line', x1:0, x2:rw, y1:bottom - k*gap, y2:bottom - k*gap}), g0.firstChild);
+    });
+    svg.setAttribute('viewBox', `0 0 ${maxW} ${Math.max(1, rows.length) * rowH}`);
+    return notes;
+  }
+
+  let ctx = null, busy = false;
+  async function play(getNotes, btn, idleText){
+    if (busy) return;
+    const span = btn.querySelector('span');
+    try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); await ctx.resume(); }
+    catch (e) { span.textContent = 'Audio unavailable here'; return; }
+    const notes = getNotes(); if (!notes.length) return;
+    busy = true; span.textContent = 'Playing…';
+    let t = ctx.currentTime + 0.05; const dur = 0.34;
+    notes.forEach(n => {
+      const delay = (t - ctx.currentTime) * 1000;
+      setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); n.g.classList.add('on'); }, delay);
+      if (n.f) {
+        const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), g2 = ctx.createGain();
+        o.type = 'triangle'; o.frequency.value = n.f; o2.type = 'sine'; o2.frequency.value = n.f * 2; g2.gain.value = 0.15;
+        o.connect(g); o2.connect(g2); g2.connect(g); g.connect(ctx.destination);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 2.2);
+        o.start(t); o2.start(t); o.stop(t + dur * 2.3); o2.stop(t + dur * 2.3);
+      }
+      t += n.wordEnd ? dur * 1.8 : dur;
+    });
+    setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); busy = false; span.textContent = idleText; }, (t - ctx.currentTime) * 1000 + 400);
+  }
+  return {MAP, PITCHES, I_OPTS, pretty, words, analyse, draw, play};
+})();
+
+
+/* ---------- Explore every option ---------- */
+(function(){
+  // The chromatic naming table, row by row. Accidental columns (1,3,6,8,10) are spelled as each tradition names them.
+  const SH = {1:'C#',3:'D#',6:'F#',8:'G#',10:'A#'}, FL = {1:'Db',3:'Eb',6:'Gb',8:'Ab',10:'Bb'};
+  const NAT = {0:'C',2:'D',4:'E',5:'F',7:'G',9:'A',11:'B'};
+  const IND = {1:'Db',3:'Eb',6:'F#',8:'Ab',10:'Bb'}; // komal (flat) and tivra (sharp) notes
+  const full = (names, acc) => names.map((n, i) => [n, NAT[i] || acc[i]]);
+  const flatRow = names => names.map((n, k) => [n, FL[[1,3,6,8,10][k]]]);
+  const TABLE = [
+    ['English', full(['C','C sharp','D','D sharp','E','F','F sharp','G','G sharp','A','A sharp','B'], SH)],
+    ['English', flatRow(['D flat','E flat','G flat','A flat','B flat'])],
+    ['German', full(['C','Cis','D','Dis','E','F','Fis','G','Gis','A','Ais','H'], SH).map(([n,p]) => [n, n === 'H' ? 'B' : p])],
+    ['German', flatRow(['Des','Es','Ges','As','B'])],
+    ['Swedish', full(['C','Ciss','D','Diss','E','F','Fiss','G','Giss','A','Aiss','H'], SH).map(([n,p]) => [n, n === 'H' ? 'B' : p])],
+    ['Swedish', flatRow(['Dess','Ess','Gess','Ass','Bess'])],
+    ['Dutch', full(['C','Cis','D','Dis','E','F','Fis','G','Gis','A','Ais','B'], SH)],
+    ['Dutch', flatRow(['Des','Es','Ges','As','Bes'])],
+    ['Solfège', full(['do','do diesis','re','re diesis','mi','fa','fa diesis','sol','sol diesis','la','la diesis','si'], SH)],
+    ['Solfège', flatRow(['re bemolle','mi bemolle','sol bemolle','la bemolle','si bemolle'])],
+    ['Byzantine', full(['Ni','Ni diesis','Pa','Pa diesis','Vu','Ga','Ga diesis','Di','Di diesis','Ke','Ke diesis','Zo'], SH)],
+    ['Byzantine', flatRow(['Pa hyphesis','Vu hyphesis','Di hyphesis','Ke hyphesis','Zo hyphesis'])],
+    ['Japanese', full(['Ha','Ei-ha','Ni','Ei-ni','Ho','He','Ei-he','To','Ei-to','I','Ei-i','Ro'], SH)],
+    ['Japanese', flatRow(['Hen-ni','Hen-ho','Hen-to','Hen-i','Hen-ro'])],
+    ['Hindustani', full(['Sa','Re Komal','Re','Ga Komal','Ga','Ma','Ma Tivra','Pa','Dha Komal','Dha','Ni Komal','Ni'], IND)],
+    ['Carnatic', full(['Sa','Shuddha Ri','Chatushruti Ri','Sadharana Ga','Antara Ga','Shuddha Ma','Prati Ma','Pa','Shuddha Dha','Chatushruti Dha','Kaisika Ni','Kakali Ni'], IND)],
+    ['Bengali', full(['Sa','Komôl Re','Re','Komôl Ga','Ga','Ma','Kôṛi Ma','Pa','Komôl Dha','Dha','Komôl Ni','Ni'], IND)],
+  ];
+  const EXTRA = [['ti','B','English solfège'],['soh','G','Tonic sol-fa'],['ut','C','Medieval'],['rey','D','My addition']];
+  const PROXY = {J:'I', Q:'K', W:'U'}; // J began as I; Q sounds as K; W is a double U
+  const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+  // The full note name, lower case, with the matched letter in capitals.
+  function mark(name, L){
+    const lo = L.toLowerCase(); let done = false;
+    return [...name.toLowerCase()].map(c => { if (!done && norm(c)[0] === lo) { done = true; return L; } return c; }).join('');
+  }
+  const cache = {};
+  function options(ch){
+    if (cache[ch]) return cache[ch];
+    const out = [], seen = new Set();
+    // One option per pitch, gathering every note name that gives it.
+    const add = (p, label, source, kind) => { const o = out.find(x => x.p === p); if (o) { if (!o.labels.includes(label)) { o.labels.push(label); o.sources.push(source); } return; } out.push({p, labels:[label], sources:[source], kind}); };
+    if (ch === 'X') {
+      // A double sharp is written as a small x, so X takes a sharpened note.
+      ['F#','C#','G#','D#','A#'].forEach(p => add(p, NameMusic.pretty(p), 'the double-sharp sign', 'Sharpened notes'));
+      return cache[ch] = out;
+    }
+    const L = PROXY[ch] || ch;
+    const via = PROXY[ch] ? ` (${ch} as ${L})` : '';
+    const begins = [], inside = [];
+    TABLE.forEach(([trad, cells]) => cells.forEach(([name, p]) => {
+      const n = norm(name).toUpperCase();
+      if (n.startsWith(L)) begins.push([name, p, trad]);
+      else if (n.includes(L)) inside.push([name, p, trad]);
+    }));
+    EXTRA.forEach(([name, p, trad]) => { if (norm(name).toUpperCase().includes(L)) inside.push([name, p, trad]); });
+    begins.forEach(([n, p, trad]) => add(p, mark(n, L), trad + via, `Begins with ${L}`));
+    inside.forEach(([n, p, trad]) => add(p, mark(n, L), trad + via, `${L} inside the name`));
+    return cache[ch] = out;
+  }
+
+  const input = document.getElementById('xname'), svg = document.getElementById('stave3');
+  const cards = document.getElementById('cards'), count = document.getElementById('xcount');
+  const narrow = matchMedia('(max-width: 560px)');
+  let picks = {}, lastText = null, items = [], notes = [];
+
+  function ruleDefault(r){
+    // My rules (as on the simple page); an undecided I or J defaults to tI.
+    const p = r.p || 'B';
+    return p;
+  }
+  function update(){
+    const ws = NameMusic.words(input.value);
+    const key = ws.join(' ');
+    if (key !== lastText) { picks = {}; lastText = key; }
+    const an = NameMusic.analyse(ws, {});
+    items = []; let idx = 0;
+    an.forEach(w => w.notes.forEach(r => {
+      const opts = options(r.ch);
+      const def = ruleDefault(r);
+      const di = Math.max(0, opts.findIndex(o => o.p === def));
+      const k = idx++;
+      const sel = picks[k] != null ? picks[k] : di;
+      const o = opts[sel];
+      const label = sel === di && r.label && r.label !== '?' ? r.label : (sel === di && (r.ch === 'I' || r.ch === 'J') ? 'tI' : o.labels[0]);
+      items.push({k, ch:r.ch, word:w.word, opts, di, sel, p:o.p, label});
+    }));
+    // stave
+    const grouped = []; let n = 0;
+    an.forEach(w => { grouped.push({word:w.word, notes: items.slice(n, n + w.notes.length).map(it => ({p:it.p, label:it.label, ch:it.ch, chosen: it.sel !== it.di}))}); n += w.notes.length; });
+    if (items.length) notes = NameMusic.draw(svg, grouped, narrow.matches ? 8 : 20);
+    else { notes = []; [...svg.querySelectorAll(':scope > :not(title)')].forEach(x => x.remove()); }
+    // cards
+    let html = '', curWord = null;
+    items.forEach(it => {
+      if (it.word !== curWord) { if (curWord !== null) html += '</div>'; html += `<div class="card-word"><h3>${it.word.charAt(0) + it.word.slice(1).toLowerCase()}</h3>`; curWord = it.word; }
+      const groups = {}; it.opts.forEach((o, j) => (groups[o.kind] = groups[o.kind] || []).push([o, j]));
+      html += `<div class="card${it.sel !== it.di ? ' changed' : ''}"><label for="opt-${it.k}"><span class="big">${it.ch}</span><span class="n">${it.opts.length} option${it.opts.length === 1 ? '' : 's'}</span></label>
+        <select id="opt-${it.k}" data-k="${it.k}">${Object.entries(groups).map(([g, list]) => `<optgroup label="${g}">${list.map(([o, j]) => `<option value="${j}"${j === it.sel ? ' selected' : ''}>${NameMusic.pretty(o.p)} · ${o.labels.slice(0, 4).join(', ')}${o.labels.length > 4 ? '…' : ''} (${[...new Set(o.sources)].slice(0, 3).join(', ')})${j === it.di ? ' ★' : ''}</option>`).join('')}</optgroup>`).join('')}</select></div>`;
+    });
+    if (curWord !== null) html += '</div>';
+    cards.innerHTML = html;
+    const total = items.reduce((a, it) => a * BigInt(it.opts.length), 1n);
+    count.textContent = items.length ? `Your name can be heard ${total.toLocaleString('en-GB')} different ways. ★ marks the note my rules would choose.` : '';
+    document.getElementById('xplay').disabled = !items.length;
+  }
+  cards.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; picks[s.dataset.k] = +s.value; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
+  input.addEventListener('input', update);
+  narrow.addEventListener('change', update);
+  document.getElementById('xplay').addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play'));
+  document.getElementById('xshuffle').addEventListener('click', () => { items.forEach(it => picks[it.k] = Math.floor(Math.random() * it.opts.length)); update(); });
+  document.getElementById('xreset').addEventListener('click', () => { picks = {}; update(); });
+  update();
+})();
+
+</script>
+</body>
+</html>

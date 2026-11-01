@@ -400,8 +400,8 @@ const NameMusic = (function(){
     X:['F#','F\u266F']}; // x is the sign for a double sharp, so X takes a sharpened note
   const I_OPTS = {B:'tI', E:'mI'}; // my rule: I can be mI or tI
   const PITCHES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
-  const STEP = {C:5,'C#':5,D:6,Eb:7,E:7,F:8,'F#':8,G:9,Ab:3,A:3,Bb:4,B:4};
-  const MIDI = {C:72,'C#':73,D:74,Eb:75,E:76,F:77,'F#':78,G:79,Ab:68,A:69,Bb:70,B:71};
+  const STEP = {C:5,'C#':5,Db:6,D:6,'D#':6,Eb:7,E:7,F:8,'F#':8,Gb:9,G:9,'G#':9,Ab:3,A:3,'A#':3,Bb:4,B:4};
+  const MIDI = {C:72,'C#':73,Db:73,D:74,'D#':75,Eb:75,E:76,F:77,'F#':78,Gb:78,G:79,'G#':80,Ab:68,A:69,'A#':70,Bb:70,B:71};
   const pretty = p => p.replace('#','♯').replace(/^([A-G])b$/,'$1♭');
   const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
 
@@ -452,7 +452,7 @@ const NameMusic = (function(){
           }
           g.appendChild(el('ellipse', {class:'head' + (r.p ? '' : ' wildhead'), cx:x, cy:y, rx:7.6, ry:5.2, transform:`rotate(-20 ${x} ${y})`}));
           const lbl = el('text', {class:'lbl', x:x, y:bottom + 30}); lbl.textContent = ch; g.appendChild(lbl);
-          const pt = el('text', {class:'pitch', x:x, y:bottom + 48}); pt.textContent = r.label; g.appendChild(pt);
+          const pt = el('text', {class:'pitch', x:x, y:bottom + 48}); pt.textContent = r.label; if (r.label.length > 6) { pt.setAttribute('textLength', 46); pt.setAttribute('lengthAdjust', 'spacingAndGlyphs'); } g.appendChild(pt);
           svg.appendChild(g); notes.push({g, f: r.p ? 440 * Math.pow(2, (MIDI[r.p] - 69) / 12) : null, wordEnd:false}); x += spacing; i++;
         });
         notes[notes.length - 1].wordEnd = true;
@@ -491,7 +491,7 @@ const NameMusic = (function(){
     });
     setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); busy = false; span.textContent = idleText; }, (t - ctx.currentTime) * 1000 + 400);
   }
-  return {MAP, PITCHES, pretty, words, analyse, draw, play};
+  return {MAP, PITCHES, I_OPTS, pretty, words, analyse, draw, play};
 })();
 
 /* Hero: my own name. X is a wild card: I chose F-sharp. */
