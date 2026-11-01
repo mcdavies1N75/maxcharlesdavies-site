@@ -200,7 +200,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
     <nav aria-label="Sections">
       <a href="#about">About</a>
       <a href="#research">Research</a>
-      <a href="#your-name">Your name</a>
+      <a href="name.html">Hear your name</a>
       <a href="#performances">Performances</a>
       <a href="#works">Works</a>
       <a href="#teaching">Teaching</a>
@@ -221,7 +221,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         </svg>
         <div class="stave-caption">
           <button class="btn" id="play" type="button" aria-describedby="stave-title"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play my name</span></button>
-          <span>The letters of my name, mapped to musical pitches. This gives pitch material only: rhythm, harmony and form come later, from the more involved process of mining that material. <a href="#your-name">See how the mapping works, and try it with your name.</a></span>
+          <span>The letters of my name, mapped to musical pitches. This gives pitch material only: rhythm, harmony and form come later, from the more involved process of mining that material. <a href="name.html">See how the mapping works, and try it with your name.</a></span>
         </div>
       </div>
 
@@ -297,32 +297,6 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
             <li><a href="#wtenebrae" data-work>Tenebrae</a><span>2016</span></li>
           </ul>
         </article>
-      </div>
-    </div>
-  </section>
-
-  <section id="your-name">
-    <div class="wrap">
-      <div class="sec-head"><span class="kicker">Try it</span><h2>Hear your own name</h2></div>
-      <p class="lead">Type your name and hear its letters mapped to pitches in the same way. Leave a space between names.</p>
-      <details class="rules">
-        <summary>How the mapping works</summary>
-        <ol>
-          <li>Each letter takes the first note name that begins with it, reading a table of naming systems (English, German, Dutch, solfège, Byzantine, Japanese and Indian) left to right, top to bottom. So H is the German name for B, M is <i>Mi</i> (E), R is <i>Re</i> (D) and V is the Byzantine <i>Vu</i> (E).</li>
-          <li>Where a letter hides inside a note name, I use that: S is always E♭ (<i>eS</i>, the German name), O is <i>sOh</i> (G), U is <i>Ut</i> (C) and Y is <i>reY</i> (D).</li>
-          <li>I is <i>mI</i> (E) or <i>tI</i> (B), whichever hasn't been heard yet in the name. If both or neither have, you choose.</li>
-          <li>The last four letters follow the same thinking. J began as a form of I, so it follows I's rule. Q is sounded as K, so it takes <i>Ke</i> (A). W is a double U, so it takes <i>Ut</i> (C). A double sharp is written as a small x, so X takes a sharpened note: F♯.</li>
-        </ol>
-        <p>Under each note you'll see the note name it came from, with the matched letter in capitals.</p>
-      </details>
-      <div class="namer">
-        <label for="yourname" class="field-label">Your name</label>
-        <div class="namer-row">
-          <input id="yourname" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="Joseph Haydn">
-          <button class="btn" id="play2" type="button"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play</span></button>
-        </div>
-        <div id="choices" class="choices"></div>
-        <svg class="stave" id="stave2" role="img" aria-label="Your name written as notes on a stave"><title>Your name written as notes on a stave</title></svg>
       </div>
     </div>
   </section>
@@ -519,41 +493,6 @@ const NameMusic = (function(){
   const layout = () => { notes = NameMusic.draw(svg, NameMusic.analyse(ws, choices), narrow.matches ? 8 : 20); };
   layout(); narrow.addEventListener('change', layout);
   document.getElementById('play').addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play my name'));
-})();
-
-/* Visitor's name */
-(function(){
-  const input = document.getElementById('yourname'), svg = document.getElementById('stave2');
-  const box = document.getElementById('choices'), btn = document.getElementById('play2');
-  const narrow = matchMedia('(max-width: 560px)');
-  const choices = {}; let notes = [];
-  const cap = s => s.charAt(0) + s.slice(1).toLowerCase();
-  function update(){
-    const ws = NameMusic.words(input.value);
-    const an = NameMusic.analyse(ws, choices);
-    const all = an.flatMap(w => w.notes);
-    let html = '';
-    const ord = ['first','second','third','fourth','fifth'];
-    an.forEach(w => { const is = w.notes.filter(r => r.ch === 'I' || r.ch === 'J'); is.forEach((r, k) => { const same = is.filter(q => q.ch === r.ch); const n = same.indexOf(r); r.which = same.length > 1 ? `The ${ord[n] || (n + 1) + 'th'} ${r.ch} in ${cap(w.word)}` : `${r.ch} in ${cap(w.word)}`; }); });
-    all.filter(r => r.iKey && (r.wild || r.chosen)).forEach(r => {
-      const why = r.both ? 'E and B have both been heard already' : 'neither E nor B has been heard yet';
-      html += `<div class="choice${choices[r.iKey] ? '' : ' open'}"><label for="pick-${r.iKey.replace('#','-')}">${r.which}: ${why}. Would you like <i>mI</i> (E) or <i>tI</i> (B)?</label>
-        <select id="pick-${r.iKey.replace('#','-')}" data-key="${r.iKey}"><option value="">Choose</option><option value="E"${choices[r.iKey] === 'E' ? ' selected' : ''}>mI (E)</option><option value="B"${choices[r.iKey] === 'B' ? ' selected' : ''}>tI (B)</option></select></div>`;
-    });
-    [...new Set(all.filter(r => !r.iKey && (r.wild || r.chosen)).map(r => r.ch))].sort().forEach(c => {
-      html += `<div class="choice${choices[c] ? '' : ' open'}"><label for="pick-${c}">${c} doesn't map. What note would you like?</label>
-        <select id="pick-${c}" data-key="${c}"><option value="">Choose a note</option>${NameMusic.PITCHES.map(p => `<option value="${p}"${choices[c] === p ? ' selected' : ''}>${NameMusic.pretty(p)}</option>`).join('')}</select></div>`;
-    });
-    box.innerHTML = html;
-    if (ws.length) notes = NameMusic.draw(svg, an, narrow.matches ? 8 : 20);
-    else { notes = []; [...svg.querySelectorAll(':scope > :not(title)')].forEach(n => n.remove()); }
-    btn.disabled = !ws.length;
-  }
-  box.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; if (s.value) choices[s.dataset.key] = s.value; else delete choices[s.dataset.key]; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
-  input.addEventListener('input', update);
-  narrow.addEventListener('change', update);
-  btn.addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play'));
-  update();
 })();
 
 /* ---------- Works catalogue ---------- */
