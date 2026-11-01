@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Max Charles Davies, Composer</title>
+<meta name="description" content="Max Charles Davies is a composer interested in the music that is already present in things: in names, words, places and texts. Works, research, performances and contact.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Music&text=%F0%9D%84%9E%E2%99%AD%E2%99%AE%E2%99%AF&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout idea: an engraved score page. One bold moment (the name as a melody on a stave), everything else set quietly in columns like a programme book. */
+  --paper:#F3F4F1;
+  --ink:#15191F;
+  --muted:#596070;
+  --rule:#CDD2D8;
+  --accent:#2A4F86;
+  --accent-soft:#E2E8F1;
+  --font-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --font-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --measure:65ch;
+  --step--1:clamp(.82rem,.8rem + .1vw,.88rem);
+  --step-0:clamp(1rem,.97rem + .15vw,1.08rem);
+  --step-1:clamp(1.2rem,1.1rem + .4vw,1.4rem);
+  --step-2:clamp(1.6rem,1.4rem + .9vw,2.2rem);
+  --step-3:clamp(2.4rem,1.8rem + 3vw,4.6rem);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1218;--ink:#E7E9EE;--muted:#9AA3B2;--rule:#2A313C;--accent:#8FB2E8;--accent-soft:#18222F;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1218;--ink:#E7E9EE;--muted:#9AA3B2;--rule:#2A313C;--accent:#8FB2E8;--accent-soft:#18222F;color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:4.5rem}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:var(--step-0);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:.18em}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+h1,h2,h3{font-family:var(--font-display);font-weight:500;text-wrap:balance;margin:0;line-height:1.1}
+h2{font-size:var(--step-2)}
+h3{font-size:var(--step-1)}
+em,i{font-style:italic}
+.wrap{max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+.prose p{max-width:var(--measure);margin:0 0 1em}
+
+/* nav */
+.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;gap:1.5rem;min-height:3.5rem}
+.brand{font-family:var(--font-display);font-size:1.05rem;color:var(--ink);text-decoration:none;white-space:nowrap}
+.top nav{display:flex;gap:1.1rem;overflow-x:auto;margin-left:auto;scrollbar-width:none}
+.top nav a{color:var(--muted);text-decoration:none;font-size:var(--step--1);white-space:nowrap;padding:.4rem 0;letter-spacing:.02em}
+.top nav a:hover{color:var(--ink)}
+@media (max-width:640px){.brand{display:none}.top nav{margin-left:0}}
+
+/* hero */
+.hero{padding:clamp(2.5rem,6vw,5rem) 0 clamp(2rem,4vw,3rem);border-bottom:1px solid var(--rule)}
+.hero h1{font-size:var(--step-3);font-weight:400;letter-spacing:-.01em}
+.hero h1 span{display:block;font-family:var(--font-body);font-size:var(--step--1);letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;font-weight:500}
+.thesis{font-family:var(--font-display);font-style:italic;font-size:var(--step-1);max-width:34ch;margin:1.2rem 0 0;line-height:1.35}
+.stave-block{margin-top:clamp(2rem,4vw,3rem)}
+.stave{width:100%;height:auto;display:block;color:var(--ink)}
+.stave .line{stroke:var(--ink);stroke-width:1}
+.stave .bar{stroke:var(--ink);stroke-width:1.2}
+.stave .head{fill:none;stroke:var(--ink);stroke-width:2.6}
+.stave .lbl{font-family:var(--font-body);font-size:13px;fill:var(--muted);text-anchor:middle;letter-spacing:.04em}
+.stave .pitch{font-family:var(--font-display);font-style:italic;font-size:13px;fill:var(--accent);text-anchor:middle}
+.stave .clef{font-family:"Noto Music","Bravura","Segoe UI Symbol",serif;font-size:76px;fill:var(--ink)}
+.stave .note{transition:transform .15s}
+  .stave .acc{font-family:"Noto Music","Segoe UI Symbol",serif;font-size:26px;fill:var(--ink)}
+.stave .note.on .acc{fill:var(--accent)}
+.stave .chosen .pitch{fill:var(--muted)}
+.stave .note.on .flat{fill:var(--accent)}
+  .stave .wildhead{stroke:var(--muted);stroke-dasharray:3 3;stroke-width:1.6}
+.stave .note.on .head{stroke:var(--accent);fill:var(--accent)}
+.stave .note.on .lbl{fill:var(--accent)}
+@media (prefers-reduced-motion: no-preference){
+  #stave .note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 45ms + 150ms)}
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+}
+.stave-caption{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;margin-top:.9rem;color:var(--muted);font-size:var(--step--1)}
+.btn{font:inherit;font-size:var(--step--1);font-weight:500;color:var(--paper);background:var(--ink);border:0;border-radius:999px;padding:.5rem 1rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
+.btn:hover{background:var(--accent)}
+.btn svg{width:.8em;height:.8em;fill:currentColor}
+.hero-links{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin-top:1.75rem;font-size:var(--step--1)}
+
+/* sections */
+section{padding:clamp(3rem,6vw,5rem) 0;border-bottom:1px solid var(--rule)}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr);gap:.5rem;margin-bottom:2rem}
+.sec-head .kicker{font-size:var(--step--1);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.two{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem}
+@media (min-width:900px){.two{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:4rem}}
+.aside{border-left:2px solid var(--accent);padding-left:1.25rem;font-size:var(--step--1);color:var(--muted);align-self:start}
+.aside h3{font-size:1.05rem;color:var(--ink);margin-bottom:.6rem}
+.aside ul{margin:0;padding:0;list-style:none;display:grid;gap:.35rem}
+
+/* threads */
+.threads{display:grid;grid-template-columns:minmax(0,1fr);gap:2.5rem}
+@media (min-width:860px){.threads{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5rem}}
+.thread{display:flex;flex-direction:column;gap:.9rem}
+.thread .num{font-family:var(--font-display);font-size:2.6rem;line-height:1;color:var(--accent);font-style:italic}
+.thread p{margin:0;max-width:var(--measure)}
+.thread ul{list-style:none;margin:0;padding:.9rem 0 0;border-top:1px solid var(--rule);display:grid;gap:.4rem;font-size:var(--step--1)}
+.thread li{display:flex;justify-content:space-between;gap:1rem}
+.thread li a{font-family:var(--font-display);font-style:italic;font-size:1.02rem;text-decoration:none;color:var(--ink)}
+.thread li a:hover{color:var(--accent);text-decoration:underline}
+.thread li span{color:var(--muted);font-variant-numeric:tabular-nums}
+.research-note{margin-top:2.5rem;max-width:var(--measure);color:var(--muted)}
+
+/* performances */
+.perf{list-style:none;margin:0;padding:0;display:grid}
+.perf li{display:grid;grid-template-columns:4.5rem minmax(0,1fr);gap:1rem;padding:.85rem 0;border-top:1px solid var(--rule)}
+.perf .y{font-variant-numeric:tabular-nums;color:var(--muted);font-size:var(--step--1);padding-top:.15rem}
+.perf .w{font-family:var(--font-display);font-style:italic;font-size:1.1rem}
+.perf .d{color:var(--muted);font-size:var(--step--1)}
+@media (min-width:860px){.perf{grid-template-columns:1fr 1fr;column-gap:3rem}}
+.perf-note{max-width:var(--measure);margin:2rem 0 0;padding-top:1.25rem;border-top:1px solid var(--rule);color:var(--muted)}
+
+/* works */
+.controls{display:grid;gap:1rem;margin-bottom:1.5rem}
+.search{display:flex;flex-wrap:wrap;gap:.75rem 1.5rem;align-items:center}
+.search input[type=search]{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--muted);padding:.4rem 0;min-width:min(100%,18rem);flex:1 1 14rem}
+.search input[type=search]::placeholder{color:var(--muted)}
+.search label.chk{display:flex;align-items:center;gap:.45rem;font-size:var(--step--1);color:var(--muted);cursor:pointer}
+.search input[type=checkbox]{accent-color:var(--accent);width:1rem;height:1rem}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{font:inherit;font-size:var(--step--1);color:var(--ink);background:transparent;border:1px solid var(--rule);border-radius:999px;padding:.3rem .8rem;cursor:pointer}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .n{color:inherit;opacity:.6;margin-left:.3rem;font-variant-numeric:tabular-nums}
+.count{font-size:var(--step--1);color:var(--muted)}
+.works{border-top:1px solid var(--ink)}
+.work{border-bottom:1px solid var(--rule)}
+.work summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:5.2rem minmax(0,1fr) auto;gap:1rem;align-items:baseline;padding:.85rem 0}
+.work summary::-webkit-details-marker{display:none}
+.work summary:hover .t{color:var(--accent)}
+.work .yr{font-variant-numeric:tabular-nums;font-size:var(--step--1);color:var(--muted)}
+.work .t{font-family:var(--font-display);font-style:italic;font-size:1.15rem;line-height:1.3}
+.work .sub{display:block;font-family:var(--font-body);font-style:normal;font-size:var(--step--1);color:var(--muted);margin-top:.15rem}
+.work .badges{display:flex;gap:.35rem;align-items:center;white-space:nowrap}
+.badge{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);border:1px solid currentColor;border-radius:3px;padding:.05rem .35rem}
+.badge.new{color:var(--paper);background:var(--accent);border-color:var(--accent)}
+.work .tog{width:.7rem;height:.7rem;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg) translateY(-3px);margin-left:.5rem;transition:transform .2s}
+.work[open] .tog{transform:rotate(225deg)}
+.work .body{padding:0 0 1.4rem 6.2rem;display:grid;gap:.9rem;max-width:calc(var(--measure) + 6.2rem)}
+.work .body p{margin:0}
+.work .forces{margin:0;padding:0;list-style:none;font-size:var(--step--1);color:var(--muted);display:grid;gap:.2rem;overflow-wrap:anywhere}
+.work .listen{display:flex;flex-wrap:wrap;gap:.5rem}
+.work .listen a{font-size:var(--step--1);text-decoration:none;border:1px solid var(--accent);border-radius:999px;padding:.2rem .75rem}
+.work .listen a:hover{background:var(--accent);color:var(--paper)}
+.work .ph{font-size:var(--step--1)}
+.work .ph h4{margin:0 0 .35rem;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.work .ph ul{margin:0;padding:0;list-style:none;display:grid;gap:.4rem}
+.work .ph li{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:.75rem}
+.work .ph .dt{font-variant-numeric:tabular-nums;color:var(--muted)}
+.work.flash summary{background:var(--accent-soft)}
+@media (max-width:640px){
+  .work summary{grid-template-columns:3.4rem minmax(0,1fr) auto;gap:.6rem}
+  .work .badges .badge{display:none}
+  .work .body{padding-left:0}
+  .work .ph li{grid-template-columns:minmax(0,1fr);gap:0}
+}
+.empty{padding:2rem 0;color:var(--muted)}
+.lead{max-width:var(--measure);margin:0 0 1rem}
+.rules{max-width:var(--measure);margin:0 0 1.75rem;font-size:var(--step--1);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:.6rem 0}
+.rules summary{cursor:pointer;font-weight:500;color:var(--accent)}
+.rules ol{margin:.75rem 0 .5rem;padding-left:1.25rem;display:grid;gap:.5rem}
+.rules p{margin:0;color:var(--muted)}
+.namer{display:grid;gap:1rem}
+.field-label{font-size:var(--step--1);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.namer-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.namer-row input{font-family:var(--font-display);font-size:var(--step-2);color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ink);padding:.2rem 0;flex:1 1 16rem;min-width:0}
+.btn:disabled{opacity:.4;cursor:default}
+.choices{display:grid;gap:.5rem}
+.choice{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;font-size:var(--step--1);padding:.55rem .8rem;border-left:2px solid var(--rule);background:transparent}
+.choice.open{border-left-color:var(--accent);background:var(--accent-soft)}
+.choice select{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:.25rem .5rem}
+.stave .wild .pitch{fill:var(--accent)}
+
+/* teaching + contact */
+.facts{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+.facts li{padding-left:1rem;border-left:1px solid var(--rule)}
+.contact{display:grid;gap:1.5rem}
+.contact .mail{font-family:var(--font-display);font-size:var(--step-2);word-break:break-word}
+.contact .mail a{text-decoration:none;color:var(--ink)}
+.contact .mail a:hover{color:var(--accent)}
+.social{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem}
+footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top">Max Charles Davies</a>
+    <nav aria-label="Sections">
+      <a href="#about">About</a>
+      <a href="#research">Research</a>
+      <a href="#your-name">Your name</a>
+      <a href="#performances">Performances</a>
+      <a href="#works">Works</a>
+      <a href="#teaching">Teaching</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="wrap">
+      <h1><span>Composer</span>Max Charles Davies</h1>
+      <p class="thesis">Making music from material already present in things: in names, words, places and texts.</p>
+
+      <div class="stave-block">
+        <svg class="stave" id="stave" role="img" aria-labelledby="stave-title" viewBox="0 0 1000 170" preserveAspectRatio="xMinYMid meet">
+          <title id="stave-title">The letters of Max Charles Davies mapped to notes on a treble stave: E A F-sharp; C B A D A E E-flat; D A E B E E-flat.</title>
+        </svg>
+        <div class="stave-caption">
+          <button class="btn" id="play" type="button" aria-describedby="stave-title"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play my name</span></button>
+          <span>The letters of my name, mapped to musical pitches. Many of my pieces begin this way, with words connected to the piece turned into notes and developed from there. <a href="#your-name">See how the mapping works, and try it with your name.</a></span>
+        </div>
+      </div>
+
+      <div class="hero-links">
+        <a href="#works">Catalogue of works</a>
+        <a href="https://soundcloud.com/maxcharlesdavies">SoundCloud</a>
+        <a href="https://www.youtube.com/channel/UC4nZxHoLiSUB2CgHkG1vsGg">YouTube</a>
+        <a href="https://www.instagram.com/pianomapping/">Piano Mapping on Instagram</a>
+      </div>
+    </div>
+  </div>
+
+  <section id="about">
+    <div class="wrap two">
+      <div>
+        <div class="sec-head"><span class="kicker">About</span><h2>Roadmap and intuition</h2></div>
+        <div class="prose">
+          <p>I'm a composer interested in the music that is already present in things: in names, words, places and texts. My work explores the balance between having a roadmap for a piece and the freedom to compose intuitively within it, a balance each new starting point invites me to strike differently.</p>
+          <p>My music has been performed by the BBC Symphony Orchestra, BBC National Orchestra of Wales, Onyx Brass, London Contemporary Music Group and Gemini. It has been broadcast on BBC Radio 3 and heard at the Cheltenham Festival, York Spring Festival, Waterford New Music Week, the National Eisteddfod, St David's Hall, Colston Hall and Wales Millennium Centre.</p>
+          <p>Alongside my own work, I've arranged, orchestrated and edited for Faber Music, Boosey &amp; Hawkes, Schott, John Wilson, Huw Watkins and Helen Grime. I'm also active as a pianist, cellist, singer and conductor.</p>
+        </div>
+      </div>
+      <aside class="aside" aria-label="At a glance">
+        <h3>At a glance</h3>
+        <ul>
+          <li>PhD in Composition, Cardiff University, supervised by Anthony Powers, Arlene Sierra and Judith Weir</li>
+          <li>MMus in Composition with Distinction, Cardiff University</li>
+          <li>BMus (Hons), Royal College of Music, Foundation Scholar</li>
+          <li>Associate Director, Audio and Music Technologies, UWE Bristol</li>
+          <li>Fellow of the Higher Education Academy</li>
+          <li>Writer Member of PRS for Music since 2002</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section id="research">
+    <div class="wrap">
+      <div class="sec-head"><span class="kicker">Research through composition</span><h2>Three threads run through my work</h2></div>
+      <div class="threads">
+        <article class="thread">
+          <span class="num" aria-hidden="true">i</span>
+          <h3>Mined material</h3>
+          <p>Many of my pieces grow from something outside music, such as a name, a poem or the story of a place. I translate it into notes and let its own properties suggest harmonies, melodies and forms. A single source can go on giving: material from one piece often becomes the seed of the next.</p>
+          <ul>
+            <li><a href="#wtears-idle-tears" data-work>Tears, Idle Tears</a><span>2026</span></li>
+            <li><a href="#wvignettes" data-work>Vignettes</a><span>2026</span></li>
+            <li><a href="#wy-gors-fawr" data-work>Y Gors Fawr</a><span>2018</span></li>
+            <li><a href="#wthe-way-of-things" data-work>The Way of Things</a><span>2016</span></li>
+            <li><a href="#wtiny-symphony" data-work>Tiny Symphony</a><span>2016</span></li>
+          </ul>
+        </article>
+        <article class="thread">
+          <span class="num" aria-hidden="true">ii</span>
+          <h3>Compression</h3>
+          <p>I'm drawn to miniature forms, such as a full symphony in a few minutes or an opera of only six words. They ask how much a listener can experience in very little time, and whether brevity can make concert music more open to new audiences.</p>
+          <ul>
+            <li><a href="#wtiny-symphony" data-work>Tiny Symphony</a><span>2016</span></li>
+            <li><a href="#wpoor-form" data-work>Poor Form</a><span>2011</span></li>
+            <li><a href="#wa-glance-at-the-painting-in-the-hallway" data-work>A glance at the painting in the hallway</a><span>2011</span></li>
+            <li><a href="#w3-years" data-work>3 Years</a><span>2009</span></li>
+            <li><a href="#wa-bit-of-a-nightmare-scenario" data-work>A bit of a nightmare scenario</a><span>2009</span></li>
+          </ul>
+        </article>
+        <article class="thread">
+          <span class="num" aria-hidden="true">iii</span>
+          <h3>The augmented performer</h3>
+          <p>Working with coders and visual artists, I explore how technology can extend what a live musician can do. That might be a pianist duetting with an improvising computer, or an improvisation that is turned into projected visuals in real time, so the performer tells a visual story as well as a musical one.</p>
+          <ul>
+            <li><a href="#wconcerto-for-augmented-piano-and-small-orchestra" data-work>Concerto for Augmented Piano</a><span>2025</span></li>
+            <li><a href="#wpiano-mapping" data-work>Piano Mapping</a><span>2022–</span></li>
+            <li><a href="#wmanhattan-circus" data-work>Manhattan Circus</a><span>2017</span></li>
+            <li><a href="#wtenebrae" data-work>Tenebrae</a><span>2016</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="your-name">
+    <div class="wrap">
+      <div class="sec-head"><span class="kicker">Try it</span><h2>Hear your own name</h2></div>
+      <p class="lead">Type your name and hear its letters mapped to pitches. Leave a space between names.</p>
+      <details class="rules">
+        <summary>How the mapping works</summary>
+        <ol>
+          <li>Each letter takes the first note name that begins with it, reading a table of naming systems (English, German, Swedish, Dutch, solfège and Byzantine) left to right, top to bottom. I stop at the Byzantine row, because by then every letter that can appear has appeared, so the Japanese and Indian systems further down add nothing new. So H is the German name for B, M is <i>Mi</i> (E), R is <i>Re</i> (D) and V is the Byzantine <i>Vu</i> (E).</li>
+          <li>Where a letter hides inside a note name, I use that: S is always E♭ (<i>eS</i>, the German name), O is <i>sOh</i> (G), U is <i>Ut</i> (C) and Y is <i>reY</i> (D).</li>
+          <li>I is <i>mI</i> (E) or <i>tI</i> (B), whichever hasn't been heard yet in the name. If both or neither have, it avoids repeating the note just before it. Only if that doesn't decide it do you choose.</li>
+          <li>The last four letters follow the same thinking. J began as a form of I, so it follows I's rule. Q is sounded as K, so it takes <i>Ke</i> (A). W is a double U, so it takes <i>Ut</i> (C). A double sharp is written as a small x, so X takes a sharpened note: F♯.</li>
+        </ol>
+        <p>Under each note you'll see the note name it came from, with the matched letter in capitals.</p>
+      </details>
+      <div class="namer">
+        <label for="yourname" class="field-label">Your name</label>
+        <div class="namer-row">
+          <input id="yourname" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="Joseph Haydn">
+          <button class="btn" id="play2" type="button"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play</span></button>
+        </div>
+        <div id="choices" class="choices"></div>
+        <svg class="stave" id="stave2" role="img" aria-label="Your name written as notes on a stave"><title>Your name written as notes on a stave</title></svg>
+      </div>
+    </div>
+  </section>
+
+  <section id="performances">
+    <div class="wrap">
+      <div class="sec-head"><span class="kicker">Selected performances</span><h2>Where the music has been heard</h2></div>
+      <ul class="perf">
+        <li><span class="y">2025</span><div><span class="w">Concerto for Augmented Piano and Orchestra</span><div class="d">Rahil Al Jassasi and Max Charles Davies, Roath Chamber Orchestra, cond. James Grindle. Urban Crofters, Cardiff</div></div></li>
+        <li><span class="y">2021</span><div><span class="w">Moving Hues (revised version)</span><div class="d">APO: The Professionals, cond. Andrew Taylor. The Hexagon, Reading</div></div></li>
+        <li><span class="y">2019</span><div><span class="w">Y Gors Fawr</span><div class="d">Côr Crymych a'r Cylch. BBC Radio 3 broadcast, Adopt a Composer scheme (Making Music, Sound and Music, PRS Foundation)</div></div></li>
+        <li><span class="y">2018</span><div><span class="w">Y Gors Fawr</span><div class="d">Côr Crymych a'r Cylch. National Eisteddfod, Wales Millennium Centre, Cardiff</div></div></li>
+        <li><span class="y">2018</span><div><span class="w">Come, Holy Spirit</span><div class="d">Cardiff University Contemporary Music Group, cond. Robert Fokkens. Released on the album <i>Only Breath</i> (Tŷ Cerdd)</div></div></li>
+        <li><span class="y">2017</span><div><span class="w">Tiny Symphony</span><div class="d">BBC National Orchestra of Wales, cond. B Tommy Andersson. Hoddinott Hall, Cardiff</div></div></li>
+        <li><span class="y">2017</span><div><span class="w">Tiny Sonata</span><div class="d">Onyx Brass and Simon Hogan. JAM Music of our Time, St Bride's Church, London</div></div></li>
+        <li><span class="y">2017</span><div><span class="w">Manhattan Circus</span><div class="d">Neil Georgeson (piano), Chris Nash (code). Arcomis Contemporary Lunchtime Concert, St David's Hall, Cardiff</div></div></li>
+        <li><span class="y">2017</span><div><span class="w">The Way of Things</span><div class="d">Aldworth Philharmonic Orchestra, cond. Andrew Taylor. Commission, Reading Town Hall</div></div></li>
+        <li><span class="y">2013</span><div><span class="w">3 Years</span><div class="d">Jane Manning. Tête à Tête: The Opera Festival, Riverside Studios, London</div></div></li>
+        <li><span class="y">2011</span><div><span class="w">Poor Form</span><div class="d">Tête à Tête: The Opera Festival, London, and Bestival, Isle of Wight</div></div></li>
+        <li><span class="y">2010</span><div><span class="w">Exultet</span><div class="d">BBC National Orchestra of Wales, cond. Jac van Steen. Composers in Wales Showcase, Hoddinott Hall, Cardiff</div></div></li>
+        <li><span class="y">2010</span><div><span class="w">The Mysterious Kiss</span><div class="d">Aldworth Philharmonic Orchestra, cond. Andrew Taylor. Winner of the APO Young Composer's Award</div></div></li>
+        <li><span class="y">2008</span><div><span class="w">Wild with Blue</span><div class="d">Amy Dickson (saxophone), Martin Cousin (piano). Cheltenham Festival, spnm commission</div></div></li>
+        <li><span class="y">2008</span><div><span class="w">Rêve</span><div class="d">London Contemporary Music Group, cond. John Traill. Holywell Music Room, Oxford, and Cardiff</div></div></li>
+        <li><span class="y">2007</span><div><span class="w">Cells and Sanctuaries</span><div class="d">BBC Symphony Orchestra, cond. André de Ridder. Maida Vale Studios, London (spnm)</div></div></li>
+        <li><span class="y">2007</span><div><span class="w">A Book of Firsts</span><div class="d">Gemini. York Spring Festival and St Giles Cripplegate, London</div></div></li>
+        <li><span class="y">2007</span><div><span class="w">Panorama</span><div class="d">PM Ensemble. Waterford New Music Week, Ireland</div></div></li>
+        <li><span class="y">2005</span><div><span class="w">Elegy</span><div class="d">Simon Wallfisch. BBC Radio 3, <i>It's a Family Business</i></div></div></li>
+      </ul>
+      <p class="perf-note">My music is also widely performed by community, church, youth and university ensembles. <i>Tiny Symphony</i> has been played by orchestras ranging from the BBC National Orchestra of Wales to schools' and community orchestras. <i>Come, Holy Spirit</i> has been performed regularly since 2015, including as a participatory piece at the CoMA festival. <i>Exodus Canticle</i> has been sung at Easter in most years since 2014.</p>
+    </div>
+  </section>
+
+  <section id="works">
+    <div class="wrap">
+      <div class="sec-head"><span class="kicker">Catalogue</span><h2>Works</h2></div>
+      <div class="controls">
+        <div class="search">
+          <label for="q" class="visually-hidden" style="position:absolute;left:-9999px">Search works</label>
+          <input type="search" id="q" placeholder="Search titles, forces, performers…" autocomplete="off">
+          <label class="chk" for="rec"><input type="checkbox" id="rec"> With recordings only</label>
+        </div>
+        <div class="chips" id="chips" role="group" aria-label="Filter by genre"></div>
+        <div class="count" id="count" aria-live="polite"></div>
+      </div>
+      <div class="works" id="list"></div>
+    </div>
+  </section>
+
+  <section id="teaching">
+    <div class="wrap two">
+      <div>
+        <div class="sec-head"><span class="kicker">Teaching and leadership</span><h2>At UWE Bristol</h2></div>
+        <div class="prose">
+          <p>I'm Associate Director for Audio and Music Technologies, overseeing our degrees in <a href="https://courses.uwe.ac.uk/J932/audio-and-music-technology">BSc (Hons) Audio and Music Technology</a> and <a href="https://courses.uwe.ac.uk/WJ39">BSc (Hons) Creative Music Technology</a> and the team who teach them. I recently led our team in a complete redevelopment of both programmes, and I'm external examiner for Music Technology at the University of Portsmouth.</p>
+          <p>I teach composition, music theory and analysis, and I love helping students find their own voice through them. I also enjoy supervising research projects, and I welcome enquiries from prospective PhD students in composition, particularly in the areas described above.</p>
+        </div>
+      </div>
+      <aside class="aside" aria-label="Teaching">
+        <h3>Currently</h3>
+        <ul>
+          <li>Module leader, Advanced Composition</li>
+          <li>Module leader, Music Portfolio</li>
+          <li>External Examiner, University of Portsmouth</li>
+          <li>Foundation Governor, St Bernadette's RC Primary School, Cardiff</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap contact">
+      <div class="sec-head"><span class="kicker">Contact</span><h2>Commissions, scores and research enquiries</h2></div>
+      <p class="mail"><a href="mailto:maxwell.davies@uwe.ac.uk">maxwell.davies@uwe.ac.uk</a></p>
+      <div class="social">
+        <a href="https://soundcloud.com/maxcharlesdavies">SoundCloud</a>
+        <a href="https://www.youtube.com/channel/UC4nZxHoLiSUB2CgHkG1vsGg">YouTube</a>
+        <a href="https://www.linkedin.com/in/maxcharlesdavies/">LinkedIn</a>
+        <a href="https://www.instagram.com/pianomapping/">Instagram: Piano Mapping</a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">© 2026 Max Charles Davies</div></footer>
+
+<script>
+const WORKS = __WORKS__;
+
+/* ---------- Name to music (Max's method) ---------- */
+const NameMusic = (function(){
+  const NS = 'http://www.w3.org/2000/svg';
+  // First note name beginning with each letter, reading the chromatic naming table
+  // (English, German, Swedish, Dutch, solfège, Byzantine) left to right, top to bottom. The table stops at Byzantine:
+  // by then every letter that can appear has appeared, with T supplied by my addition ti.
+  // Label shows that note name with the matched letter capitalised.
+  const MAP = {A:['A','A'],B:['B','B'],C:['C','C'],D:['D','D'],E:['E','E'],F:['F','F'],G:['G','G'],
+    H:['B','H'],K:['A','Ke'],L:['A','La'],M:['E','Mi'],N:['C','Ni'],P:['D','Pa'],R:['D','Re'],
+    T:['B','Ti'],V:['E','Vu'],Z:['B','Zo'],
+    S:['Eb','eS'],  // my rule: S is always E-flat, from the German Es
+    O:['G','sOh'],  // my rule: O from tonic sol-fa soh
+    U:['C','Ut'],   // my rule: U from the medieval ut
+    Y:['D','reY'],  // my rule: Y from rey
+    Q:['A','Ke'],   // Q is sounded as K
+    W:['C','Ut'],   // W is a double U
+    X:['F#','F\u266F']}; // x is the sign for a double sharp, so X takes a sharpened note
+  const I_OPTS = {B:'tI', E:'mI'}; // my rule: I can be mI or tI
+  const PITCHES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+  const STEP = {C:5,'C#':5,Db:6,D:6,'D#':6,Eb:7,E:7,F:8,'F#':8,Gb:9,G:9,'G#':9,Ab:3,A:3,'A#':3,Bb:4,B:4};
+  const MIDI = {C:72,'C#':73,Db:73,D:74,'D#':75,Eb:75,E:76,F:77,'F#':78,Gb:78,G:79,'G#':80,Ab:68,A:69,'A#':70,Bb:70,B:71};
+  const pretty = p => p.replace('#','♯').replace(/^([A-G])b$/,'$1♭');
+  const el = (n, a) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); return e; };
+
+  function words(text){
+    return text.normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z\s]/g,'').split(/\s+/).filter(Boolean);
+  }
+  // Work out every letter's pitch. choices: wild letters by letter ({X:'F#'}), undecided I's by occurrence ({'I#0':'B'}).
+  // I rule: mI (E) or tI (B), whichever hasn't been heard yet in the name. If both or neither have,
+  // avoid repeating the note just before it. Only if that doesn't decide it is it a choice.
+  function analyse(ws, choices){
+    const heard = new Set(); let iCount = 0, prev = null;
+    return ws.map(w => ({word:w, notes:[...w].map(ch => {
+      let r;
+      if (ch === 'I' || ch === 'J') { // J began as a form of I, so it follows I's rule
+        const key = 'I#' + (iCount++), e = heard.has('E'), b = heard.has('B');
+        if (e && !b) r = {p:'B', label:'tI', auto:true};
+        else if (b && !e) r = {p:'E', label:'mI', auto:true};
+        else if (prev === 'E') r = {p:'B', label:'tI', auto:true};
+        else if (prev === 'B') r = {p:'E', label:'mI', auto:true};
+        else { const p = choices[key]; r = {p: p || null, label: p ? I_OPTS[p] : '?', wild: !p, chosen: !!p, iKey:key, both:e && b, hasPrev: prev !== null}; }
+      } else if (MAP[ch]) r = {p:MAP[ch][0], label:MAP[ch][1]};
+      else { const p = choices[ch]; r = {p: p || null, label: p ? pretty(p) : '?', wild: !p, chosen: !!p}; }
+      r.ch = ch; r.word = w; if (r.p) heard.add(r.p); prev = r.p; return r;
+    })}));
+  }
+  function draw(svg, an, perRow){
+    [...svg.querySelectorAll(':scope > :not(title)')].forEach(n => n.remove());
+    const rows = []; let cur = [], n = 0;
+    an.forEach(w => { if (cur.length && n + w.notes.length > perRow) { rows.push(cur); cur = []; n = 0; } cur.push(w); n += w.notes.length; });
+    if (cur.length) rows.push(cur);
+    const gap = 12, rowH = 165, spacing = 50; const notes = []; let i = 0, maxW = 300;
+    const altered = {}; // staff position -> accidental last shown there, so a later natural gets a natural sign
+    rows.forEach((row, ri) => {
+      const bottom = 104 + ri * rowH; const g0 = el('g', {}); svg.appendChild(g0);
+      const clef = el('text', {class:'clef', x:6, y:bottom + 10}); clef.textContent = '\u{1D11E}'; g0.appendChild(clef);
+      let x = 84;
+      row.forEach((w, wi) => {
+        w.notes.forEach(r => {
+          const ch = r.ch;
+          const g = el('g', {class:'note' + (r.wild ? ' wild' : r.chosen ? ' chosen' : '')}); g.style.setProperty('--i', i);
+          const y = bottom - (r.p ? STEP[r.p] : 4) * gap / 2;
+          if (r.p) {
+            const pos = STEP[r.p], alt = r.p.length > 1 ? r.p[1] : '';
+            let sign = '';
+            if (alt) { sign = alt === '#' ? '♯' : '♭'; altered[pos] = alt; }
+            else if (altered[pos]) { sign = '♮'; altered[pos] = ''; }
+            if (sign) { const acc = el('text', {class:'acc', x:x - 21, y:y + 5}); acc.textContent = sign; g.appendChild(acc); }
+          }
+          g.appendChild(el('ellipse', {class:'head' + (r.p ? '' : ' wildhead'), cx:x, cy:y, rx:7.6, ry:5.2, transform:`rotate(-20 ${x} ${y})`}));
+          const lbl = el('text', {class:'lbl', x:x, y:bottom + 30}); lbl.textContent = ch; g.appendChild(lbl);
+          const pt = el('text', {class:'pitch', x:x, y:bottom + 48}); pt.textContent = r.label; if (r.label.length > 6) { pt.setAttribute('textLength', 46); pt.setAttribute('lengthAdjust', 'spacingAndGlyphs'); } g.appendChild(pt);
+          svg.appendChild(g); notes.push({g, f: r.p ? 440 * Math.pow(2, (MIDI[r.p] - 69) / 12) : null, wordEnd:false}); x += spacing; i++;
+        });
+        notes[notes.length - 1].wordEnd = true;
+        const bx = x - spacing/2 + 4;
+        g0.appendChild(el('line', {class:'bar', x1:bx, x2:bx, y1:bottom - 4*gap, y2:bottom}));
+        if (ri === rows.length - 1 && wi === row.length - 1) g0.appendChild(el('line', {class:'bar', x1:bx+5, x2:bx+5, y1:bottom - 4*gap, y2:bottom, 'stroke-width':4}));
+        x += 10;
+      });
+      const rw = x - spacing/2 + 4; maxW = Math.max(maxW, rw + 10);
+      for (let k = 0; k < 5; k++) g0.insertBefore(el('line', {class:'line', x1:0, x2:rw, y1:bottom - k*gap, y2:bottom - k*gap}), g0.firstChild);
+    });
+    svg.setAttribute('viewBox', `0 0 ${maxW} ${Math.max(1, rows.length) * rowH}`);
+    return notes;
+  }
+
+  let ctx = null, busy = false;
+  async function play(getNotes, btn, idleText){
+    if (busy) return;
+    const span = btn.querySelector('span');
+    try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); await ctx.resume(); }
+    catch (e) { span.textContent = 'Audio unavailable here'; return; }
+    const notes = getNotes(); if (!notes.length) return;
+    busy = true; span.textContent = 'Playing…';
+    let t = ctx.currentTime + 0.05; const dur = 0.34;
+    notes.forEach(n => {
+      const delay = (t - ctx.currentTime) * 1000;
+      setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); n.g.classList.add('on'); }, delay);
+      if (n.f) {
+        const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), g2 = ctx.createGain();
+        o.type = 'triangle'; o.frequency.value = n.f; o2.type = 'sine'; o2.frequency.value = n.f * 2; g2.gain.value = 0.15;
+        o.connect(g); o2.connect(g2); g2.connect(g); g.connect(ctx.destination);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 2.2);
+        o.start(t); o2.start(t); o.stop(t + dur * 2.3); o2.stop(t + dur * 2.3);
+      }
+      t += n.wordEnd ? dur * 1.8 : dur;
+    });
+    setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); busy = false; span.textContent = idleText; }, (t - ctx.currentTime) * 1000 + 400);
+  }
+  return {MAP, PITCHES, I_OPTS, pretty, words, analyse, draw, play};
+})();
+
+/* Hero: my own name. X is a wild card: I chose F-sharp. */
+(function(){
+  const svg = document.getElementById('stave');
+  const narrow = matchMedia('(max-width: 560px)');
+  const ws = NameMusic.words('Max Charles Davies'), choices = {'I#0':'B'};
+  let notes = [];
+  const layout = () => { notes = NameMusic.draw(svg, NameMusic.analyse(ws, choices), narrow.matches ? 8 : 20); };
+  layout(); narrow.addEventListener('change', layout);
+  document.getElementById('play').addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play my name'));
+})();
+
+/* Visitor's name */
+(function(){
+  const input = document.getElementById('yourname'), svg = document.getElementById('stave2');
+  const box = document.getElementById('choices'), btn = document.getElementById('play2');
+  const narrow = matchMedia('(max-width: 560px)');
+  const choices = {}; let notes = [];
+  const cap = s => s.charAt(0) + s.slice(1).toLowerCase();
+  function update(){
+    const ws = NameMusic.words(input.value);
+    const an = NameMusic.analyse(ws, choices);
+    const all = an.flatMap(w => w.notes);
+    let html = '';
+    const ord = ['first','second','third','fourth','fifth'];
+    an.forEach(w => { const is = w.notes.filter(r => r.ch === 'I' || r.ch === 'J'); is.forEach((r, k) => { const same = is.filter(q => q.ch === r.ch); const n = same.indexOf(r); r.which = same.length > 1 ? `The ${ord[n] || (n + 1) + 'th'} ${r.ch} in ${cap(w.word)}` : `${r.ch} in ${cap(w.word)}`; }); });
+    all.filter(r => r.iKey && (r.wild || r.chosen)).forEach(r => {
+      const why = (r.both ? 'E and B have both been heard already' : 'neither E nor B has been heard yet') + (r.hasPrev ? ', and the note before is neither' : '');
+      html += `<div class="choice${choices[r.iKey] ? '' : ' open'}"><label for="pick-${r.iKey.replace('#','-')}">${r.which}: ${why}. Would you like <i>mI</i> (E) or <i>tI</i> (B)?</label>
+        <select id="pick-${r.iKey.replace('#','-')}" data-key="${r.iKey}"><option value="">Choose</option><option value="E"${choices[r.iKey] === 'E' ? ' selected' : ''}>mI (E)</option><option value="B"${choices[r.iKey] === 'B' ? ' selected' : ''}>tI (B)</option></select></div>`;
+    });
+    [...new Set(all.filter(r => !r.iKey && (r.wild || r.chosen)).map(r => r.ch))].sort().forEach(c => {
+      html += `<div class="choice${choices[c] ? '' : ' open'}"><label for="pick-${c}">${c} doesn't map. What note would you like?</label>
+        <select id="pick-${c}" data-key="${c}"><option value="">Choose a note</option>${NameMusic.PITCHES.map(p => `<option value="${p}"${choices[c] === p ? ' selected' : ''}>${NameMusic.pretty(p)}</option>`).join('')}</select></div>`;
+    });
+    box.innerHTML = html;
+    if (ws.length) notes = NameMusic.draw(svg, an, narrow.matches ? 8 : 20);
+    else { notes = []; [...svg.querySelectorAll(':scope > :not(title)')].forEach(n => n.remove()); }
+    btn.disabled = !ws.length;
+  }
+  box.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; if (s.value) choices[s.dataset.key] = s.value; else delete choices[s.dataset.key]; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
+  // Carry the name to the deeper page (and remember it for this visit).
+  function carry(){
+    const v = input.value.trim();
+    document.querySelectorAll('a[href^="explore.html"]').forEach(a => a.href = v ? 'explore.html?name=' + encodeURIComponent(v) : 'explore.html');
+    try { sessionStorage.setItem('mcd-name', v); } catch (e) {}
+  }
+  try { const q = new URLSearchParams(location.search).get('name') || sessionStorage.getItem('mcd-name'); if (q) input.value = q.slice(0, 40); } catch (e) {}
+  input.addEventListener('input', () => { update(); carry(); });
+  narrow.addEventListener('change', update);
+  btn.addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play'));
+  update(); carry();
+})();
+
+/* ---------- Works catalogue ---------- */
+(function(){
+  const list = document.getElementById('list');
+  const chipsEl = document.getElementById('chips');
+  const q = document.getElementById('q');
+  const rec = document.getElementById('rec');
+  const count = document.getElementById('count');
+  const ORDER = ['Orchestral','Choral','Chamber','Large ensemble','Solo','Keyboard','Voice','Opera & music theatre','Multidisciplinary','Electronic & media'];
+  let cat = 'All';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const forceText = f => f.replace(/^(Orchestration|Voices?|Instruments?):\s*/, '');
+
+  function render(){
+    const term = q.value.trim().toLowerCase();
+    const shown = WORKS.filter(w =>
+      (cat === 'All' || w.cats.includes(cat)) &&
+      (!rec.checked || w.media.length) &&
+      (!term || [w.title, w.desc, w.forces.join(' '), w.perfs.map(p => p.text).join(' '), w.year].join(' ').toLowerCase().includes(term)));
+    list.innerHTML = shown.map(w => `
+      <details class="work" id="${w.id}">
+        <summary>
+          <span class="yr">${esc(w.year)}</span>
+          <span class="t">${esc(w.title)}<span class="sub">${esc(w.cats.join(' · '))}${w.dur ? ' · ' + esc(w.dur) : ''}</span></span>
+          <span class="badges">${w.new ? '<span class="badge new">New</span>' : ''}${w.media.length ? '<span class="badge">Listen</span>' : ''}${w.perfs.length ? `<span class="badge">${w.perfs.length} perf.</span>` : ''}<span class="tog" aria-hidden="true"></span></span>
+        </summary>
+        <div class="body">
+          ${w.desc ? `<p>${esc(w.desc)}</p>` : ''}
+          ${w.forces.length ? `<ul class="forces">${w.forces.map(f => `<li>${esc(f)}</li>`).join('')}</ul>` : ''}
+          ${w.media.length ? `<div class="listen">${w.media.map(m => `<a href="${esc(m.url)}" rel="noopener">${esc(m.label)}</a>`).join('')}</div>` : ''}
+          ${w.perfs.length ? `<div class="ph"><h4>Performances</h4><ul>${w.perfs.map(p => `<li><span class="dt">${esc(p.date)}</span><span>${esc(p.text)}</span></li>`).join('')}</ul></div>` : ''}
+        </div>
+      </details>`).join('') || '<p class="empty">No works match. Try a different search or filter.</p>';
+    count.textContent = `Showing ${shown.length} of ${WORKS.length} works`;
+  }
+
+  function chips(){
+    const counts = {All: WORKS.length};
+    WORKS.forEach(w => w.cats.forEach(c => counts[c] = (counts[c] || 0) + 1));
+    chipsEl.innerHTML = ['All', ...ORDER.filter(c => counts[c])].map(c =>
+      `<button type="button" class="chip" aria-pressed="${c === cat}" data-cat="${esc(c)}">${esc(c)}<span class="n">${counts[c]}</span></button>`).join('');
+  }
+  chipsEl.addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    cat = b.dataset.cat; chips(); render();
+  });
+  q.addEventListener('input', render);
+  rec.addEventListener('change', render);
+  chips(); render();
+
+  function openWork(id){
+    let d = document.getElementById(id);
+    if (!d) { cat = 'All'; q.value = ''; rec.checked = false; chips(); render(); d = document.getElementById(id); }
+    if (!d) return;
+    d.open = true; d.classList.add('flash');
+    d.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center'});
+    setTimeout(() => d.classList.remove('flash'), 1600);
+  }
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[data-work]'); if (!a) return;
+    e.preventDefault(); openWork(a.getAttribute('href').slice(1));
+  });
+  if (location.hash.startsWith('#w')) openWork(location.hash.slice(1));
+})();
+</script>
+</body>
+</html>
