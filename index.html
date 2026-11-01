@@ -217,7 +217,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         </svg>
         <div class="stave-caption">
           <button class="btn" id="play" type="button" aria-describedby="stave-title"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play my name</span></button>
-          <span>The letters of my name, mapped to musical pitches. Each letter is matched to the first note name that begins with it, reading across the naming systems of English, German, Dutch, solfège, Byzantine, Japanese and Indian music, shown with the matched letter in capitals. Where a letter hides inside a note name, I use that too: S is always E♭ (<i>eS</i>), I is <i>mI</i> or <i>tI</i>, whichever hasn't been heard yet (in my name both have, so I chose <i>tI</i>), O is <i>sOh</i> and U is <i>Ut</i>. X has no match, so it's a wild card: I chose F♯. This mapping gives pitch material only. Rhythm, harmony and form come later, from the more involved process of mining that material. <a href="#your-name">Try it with your name.</a></span>
+          <span>The letters of my name, mapped to musical pitches. Each letter is matched to the first note name that begins with it, reading across the naming systems of English, German, Dutch, solfège, Byzantine, Japanese and Indian music, shown with the matched letter in capitals. Where a letter hides inside a note name, I use that too: S is always E♭ (<i>eS</i>), I is <i>mI</i> or <i>tI</i>, whichever hasn't been heard yet (in my name both have, so I chose <i>tI</i>), O is <i>sOh</i>, U is <i>Ut</i> and Y is <i>reY</i>. X has no match, so it's a wild card: I chose F♯. This mapping gives pitch material only. Rhythm, harmony and form come later, from the more involved process of mining that material. <a href="#your-name">Try it with your name.</a></span>
         </div>
       </div>
 
@@ -405,7 +405,8 @@ const NameMusic = (function(){
     T:['G','To'],V:['E','Vu'],Z:['B','Zo'],
     S:['Eb','eS'],  // my rule: S is always E-flat, from the German Es
     O:['G','sOh'],  // my rule: O from tonic sol-fa soh
-    U:['C','Ut']};  // my rule: U from the medieval ut
+    U:['C','Ut'],   // my rule: U from the medieval ut
+    Y:['D','reY']}; // my rule: Y from rey
   const I_OPTS = {B:'tI', E:'mI'}; // my rule: I can be mI or tI
   const PITCHES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
   const STEP = {C:5,'C#':5,D:6,Eb:7,E:7,F:8,'F#':8,G:9,Ab:3,A:3,Bb:4,B:4};
