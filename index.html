@@ -81,7 +81,7 @@ em,i{font-style:italic}
 .stave .note.on .head{stroke:var(--accent);fill:var(--accent)}
 .stave .note.on .lbl{fill:var(--accent)}
 @media (prefers-reduced-motion: no-preference){
-  .stave .note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 45ms + 150ms)}
+  #stave .note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 45ms + 150ms)}
   @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 }
 .stave-caption{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;margin-top:.9rem;color:var(--muted);font-size:var(--step--1)}
@@ -166,7 +166,11 @@ section{padding:clamp(3rem,6vw,5rem) 0;border-bottom:1px solid var(--rule)}
   .work .ph li{grid-template-columns:minmax(0,1fr);gap:0}
 }
 .empty{padding:2rem 0;color:var(--muted)}
-.lead{max-width:var(--measure);margin:0 0 1.5rem}
+.lead{max-width:var(--measure);margin:0 0 1rem}
+.rules{max-width:var(--measure);margin:0 0 1.75rem;font-size:var(--step--1);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:.6rem 0}
+.rules summary{cursor:pointer;font-weight:500;color:var(--accent)}
+.rules ol{margin:.75rem 0 .5rem;padding-left:1.25rem;display:grid;gap:.5rem}
+.rules p{margin:0;color:var(--muted)}
 .namer{display:grid;gap:1rem}
 .field-label{font-size:var(--step--1);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
 .namer-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
@@ -217,7 +221,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         </svg>
         <div class="stave-caption">
           <button class="btn" id="play" type="button" aria-describedby="stave-title"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play my name</span></button>
-          <span>The letters of my name, mapped to musical pitches. Each letter is matched to the first note name that begins with it, reading across the naming systems of English, German, Dutch, solfège, Byzantine, Japanese and Indian music, shown with the matched letter in capitals. Where a letter hides inside a note name, I use that too: S is always E♭ (<i>eS</i>), I is <i>mI</i> or <i>tI</i>, whichever hasn't been heard yet (in my name both have, so I chose <i>tI</i>), O is <i>sOh</i>, U is <i>Ut</i> and Y is <i>reY</i>. X has no match, so it's a wild card: I chose F♯. This mapping gives pitch material only. Rhythm, harmony and form come later, from the more involved process of mining that material. <a href="#your-name">Try it with your name.</a></span>
+          <span>The letters of my name, mapped to musical pitches. This gives pitch material only: rhythm, harmony and form come later, from the more involved process of mining that material. <a href="#your-name">See how the mapping works, and try it with your name.</a></span>
         </div>
       </div>
 
@@ -300,7 +304,17 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
   <section id="your-name">
     <div class="wrap">
       <div class="sec-head"><span class="kicker">Try it</span><h2>Hear your own name</h2></div>
-      <p class="lead">Type your name and hear its letters mapped to pitches in the same way. Leave a space between names. Some letters have no note in the table, so you choose one.</p>
+      <p class="lead">Type your name and hear its letters mapped to pitches in the same way. Leave a space between names.</p>
+      <details class="rules">
+        <summary>How the mapping works</summary>
+        <ol>
+          <li>Each letter takes the first note name that begins with it, reading a table of naming systems (English, German, Dutch, solfège, Byzantine, Japanese and Indian) left to right, top to bottom. So H is the German name for B, M is <i>Mi</i> (E), R is <i>Re</i> (D) and V is the Byzantine <i>Vu</i> (E).</li>
+          <li>Where a letter hides inside a note name, I use that: S is always E♭ (<i>eS</i>, the German name), O is <i>sOh</i> (G), U is <i>Ut</i> (C) and Y is <i>reY</i> (D).</li>
+          <li>I is <i>mI</i> (E) or <i>tI</i> (B), whichever hasn't been heard yet in the name. If both or neither have, you choose.</li>
+          <li>The last four letters follow the same thinking. J began as a form of I, so it follows I's rule. Q is sounded as K, so it takes <i>Ke</i> (A). W is a double U, so it takes <i>Ut</i> (C). A double sharp is written as a small x, so X takes a sharpened note: F♯.</li>
+        </ol>
+        <p>Under each note you'll see the note name it came from, with the matched letter in capitals.</p>
+      </details>
       <div class="namer">
         <label for="yourname" class="field-label">Your name</label>
         <div class="namer-row">
@@ -406,7 +420,10 @@ const NameMusic = (function(){
     S:['Eb','eS'],  // my rule: S is always E-flat, from the German Es
     O:['G','sOh'],  // my rule: O from tonic sol-fa soh
     U:['C','Ut'],   // my rule: U from the medieval ut
-    Y:['D','reY']}; // my rule: Y from rey
+    Y:['D','reY'],  // my rule: Y from rey
+    Q:['A','Ke'],   // Q is sounded as K
+    W:['C','Ut'],   // W is a double U
+    X:['F#','F\u266F']}; // x is the sign for a double sharp, so X takes a sharpened note
   const I_OPTS = {B:'tI', E:'mI'}; // my rule: I can be mI or tI
   const PITCHES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
   const STEP = {C:5,'C#':5,D:6,Eb:7,E:7,F:8,'F#':8,G:9,Ab:3,A:3,Bb:4,B:4};
@@ -423,7 +440,7 @@ const NameMusic = (function(){
     const heard = new Set(); let iCount = 0;
     return ws.map(w => ({word:w, notes:[...w].map(ch => {
       let r;
-      if (ch === 'I') {
+      if (ch === 'I' || ch === 'J') { // J began as a form of I, so it follows I's rule
         const key = 'I#' + (iCount++), e = heard.has('E'), b = heard.has('B');
         if (e && !b) r = {p:'B', label:'tI', auto:true};
         else if (b && !e) r = {p:'E', label:'mI', auto:true};
@@ -497,7 +514,7 @@ const NameMusic = (function(){
 (function(){
   const svg = document.getElementById('stave');
   const narrow = matchMedia('(max-width: 560px)');
-  const ws = NameMusic.words('Max Charles Davies'), choices = {X:'F#', 'I#0':'B'};
+  const ws = NameMusic.words('Max Charles Davies'), choices = {'I#0':'B'};
   let notes = [];
   const layout = () => { notes = NameMusic.draw(svg, NameMusic.analyse(ws, choices), narrow.matches ? 8 : 20); };
   layout(); narrow.addEventListener('change', layout);
@@ -517,7 +534,7 @@ const NameMusic = (function(){
     const all = an.flatMap(w => w.notes);
     let html = '';
     const ord = ['first','second','third','fourth','fifth'];
-    an.forEach(w => { const is = w.notes.filter(r => r.ch === 'I'); is.forEach((r, k) => r.which = is.length > 1 ? `The ${ord[k] || (k + 1) + 'th'} I in ${cap(w.word)}` : `I in ${cap(w.word)}`); });
+    an.forEach(w => { const is = w.notes.filter(r => r.ch === 'I' || r.ch === 'J'); is.forEach((r, k) => { const same = is.filter(q => q.ch === r.ch); const n = same.indexOf(r); r.which = same.length > 1 ? `The ${ord[n] || (n + 1) + 'th'} ${r.ch} in ${cap(w.word)}` : `${r.ch} in ${cap(w.word)}`; }); });
     all.filter(r => r.iKey && (r.wild || r.chosen)).forEach(r => {
       const why = r.both ? 'E and B have both been heard already' : 'neither E nor B has been heard yet';
       html += `<div class="choice${choices[r.iKey] ? '' : ' open'}"><label for="pick-${r.iKey.replace('#','-')}">${r.which}: ${why}. Would you like <i>mI</i> (E) or <i>tI</i> (B)?</label>
