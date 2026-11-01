@@ -417,7 +417,7 @@ const NameMusic = (function(){
     if ('ACDEFG'.includes(L)) { add(L, L, 'Letter name', 'The letter itself'); return cache[ch] = out; }
     // Fixed letters: one note only.
     const FIXED = {T:['B','Ti'], K:['A','Ke'], R:['D','Re'], U:['C','Ut'], Y:['D','reY']};
-    if (FIXED[L]) { add(FIXED[L][0], FIXED[L][1], 'My rule' + via, 'Fixed'); return cache[ch] = out; }
+    if (FIXED[L]) { add(FIXED[L][0], FIXED[L][1], 'My rule' + (PROXY[ch] ? `, ${ch} as ${L}` : ''), 'Fixed'); return cache[ch] = out; }
     if (L === 'B') { add('B', 'B', 'Letter name', 'The letter itself'); add('Bb', 'B', 'German', 'The letter itself'); return cache[ch] = out; }
     const via = PROXY[ch] ? ` (${ch} as ${L})` : '';
     const begins = [], inside = [];
