@@ -105,7 +105,7 @@ section{padding:clamp(3rem,6vw,5rem) 0;border-bottom:1px solid var(--rule)}
 
 /* threads */
 .threads{display:grid;grid-template-columns:minmax(0,1fr);gap:2.5rem}
-@media (min-width:860px){.threads{grid-template-columns:repeat(3,minmax(0,1fr));gap:2.5rem}}
+@media (min-width:760px){.threads{grid-template-columns:repeat(2,minmax(0,1fr));gap:3rem 3.5rem}}
 .thread{display:flex;flex-direction:column;gap:.9rem}
 .thread .num{font-family:var(--font-display);font-size:2.6rem;line-height:1;color:var(--accent);font-style:italic}
 .thread p{margin:0;max-width:var(--measure)}
@@ -114,6 +114,15 @@ section{padding:clamp(3rem,6vw,5rem) 0;border-bottom:1px solid var(--rule)}
 .thread li a{font-family:var(--font-display);font-style:italic;font-size:1.02rem;text-decoration:none;color:var(--ink)}
 .thread li a:hover{color:var(--accent);text-decoration:underline}
 .thread li span{color:var(--muted);font-variant-numeric:tabular-nums}
+.research-intro{max-width:var(--measure);margin:0 0 2rem}
+.thread .roots{font-size:var(--step--1);color:var(--muted)}
+.thread .roots a{color:var(--ink);font-family:var(--font-display);font-style:italic;font-size:1.02rem;text-decoration-color:var(--rule)}
+.doctorate{margin-top:3.5rem;padding:1.5rem 1.75rem;border:1px solid var(--rule);border-left:3px solid var(--accent);border-radius:4px;display:grid;gap:1rem;max-width:calc(var(--measure) + 4rem)}
+.doctorate p{margin:0}
+.doc-links{display:flex;flex-wrap:wrap;gap:.75rem}
+.doc{display:inline-flex;flex-direction:column;gap:.1rem;text-decoration:none;border:1px solid var(--accent);border-radius:6px;padding:.55rem .9rem;font-weight:500}
+.doc span{font-size:.78rem;color:var(--muted);font-weight:400}
+.doc:hover{background:var(--accent-soft)}
 .research-note{margin-top:2.5rem;max-width:var(--measure);color:var(--muted)}
 
 /* performances */
@@ -259,7 +268,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         <ul>
           <li>Associate Director, Audio and Music Technologies, UWE Bristol</li>
           <li>PGCert in Academic Professional Practice (Distinction) and Fellow of the Higher Education Academy</li>
-          <li>PhD in Composition, Cardiff University, supervised by Anthony Powers, Arlene Sierra and Judith Weir</li>
+          <li><a href="#doctorate">PhD in Composition</a>, Cardiff University, supervised by Anthony Powers, Arlene Sierra and Judith Weir</li>
           <li>MMus in Composition with Distinction, Cardiff University</li>
           <li>BMus (Hons), Royal College of Music, Foundation Scholar</li>
         </ul>
@@ -269,7 +278,8 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 
   <section id="research">
     <div class="wrap">
-      <div class="sec-head"><span class="kicker">Research through composition</span><h2>Three threads run through my work</h2></div>
+      <div class="sec-head"><span class="kicker">Research through composition</span><h2>Four threads run through my work</h2></div>
+      <p class="research-intro">These threads began in my Masters and doctoral research at Cardiff University, which asked how pre-composed processes and intuitive, improvised choices could work together. That question still drives my work.</p>
       <figure class="photo">
         <img src="img/during-1600.jpg" srcset="img/during-800.jpg 800w, img/during-1600.jpg 1600w" sizes="(max-width: 1120px) 100vw, 1040px" width="1600" height="720" alt="Max Charles Davies playing a white grand piano with a painted landscape projected onto its lid, surrounded by an orchestra and conductor in a darkened hall" loading="lazy">
         <figcaption>Performing my <i>Concerto for Augmented Piano and Orchestra</i> with Roath Chamber Orchestra, conducted by James Grindle, with visuals by Rahil Al Jassasi. Urban Crofters, Cardiff, March 2025. Photo: Keith Bloggs</figcaption>
@@ -279,18 +289,33 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
           <span class="num" aria-hidden="true">i</span>
           <h3>Mined material</h3>
           <p>Many of my pieces grow from something outside music, such as a name, a poem or the story of a place. I translate it into notes and let its own properties suggest harmonies, melodies and forms. A single source can go on giving: material from one piece often becomes the seed of the next.</p>
+          <p class="roots">It began with <a href="#w3-years" data-work>3 Years</a> (2009), whose pitches come entirely from the name of its dedicatee, Judith Weir. At the time this was an exception; it has since become central.</p>
           <ul>
             <li><a href="#wtears-idle-tears" data-work>Tears, Idle Tears</a><span>2026</span></li>
             <li><a href="#wvignettes" data-work>Vignettes</a><span>2026</span></li>
             <li><a href="#wy-gors-fawr" data-work>Y Gors Fawr</a><span>2018</span></li>
             <li><a href="#wthe-way-of-things" data-work>The Way of Things</a><span>2016</span></li>
             <li><a href="#wtiny-symphony" data-work>Tiny Symphony</a><span>2016</span></li>
+            <li><a href="#w3-years" data-work>3 Years</a><span>2009</span></li>
           </ul>
         </article>
         <article class="thread">
           <span class="num" aria-hidden="true">ii</span>
+          <h3>Harmony that breathes</h3>
+          <p>Harmony that opens out and closes in over time, from dense clusters to open sonorities and back again, so that a piece seems to breathe. It gives a structure its sense of direction, while leaving the detail to the ear.</p>
+          <p class="roots">It began in <a href="#wcells-and-sanctuaries" data-work>Cells and Sanctuaries</a> (2006), my Masters piece, and developed through <i>Sea Sick</i> and <i>Workplace Diary</i> in my doctoral portfolio.</p>
+          <ul>
+            <li><a href="#wthe-way-of-things" data-work>The Way of Things</a><span>2016</span></li>
+            <li><a href="#wworkplace-diary" data-work>Workplace Diary</a><span>2011</span></li>
+            <li><a href="#wdoodles" data-work>Doodles (Sea Sick)</a><span>2009–10</span></li>
+            <li><a href="#wcells-and-sanctuaries" data-work>Cells and Sanctuaries</a><span>2006</span></li>
+          </ul>
+        </article>
+        <article class="thread">
+          <span class="num" aria-hidden="true">iii</span>
           <h3>Compression</h3>
           <p>I'm drawn to miniature forms, such as a full symphony in a few minutes or an opera of only six words. They ask how much a listener can experience in very little time, and whether brevity can make concert music more open to new audiences.</p>
+          <p class="roots">It began with <a href="#wa-bit-of-a-nightmare-scenario" data-work>A Bit of a Nightmare Scenario</a> (2009), a six-word opera from my doctoral portfolio.</p>
           <ul>
             <li><a href="#wtiny-symphony" data-work>Tiny Symphony</a><span>2016</span></li>
             <li><a href="#wpoor-form" data-work>Poor Form</a><span>2011</span></li>
@@ -300,9 +325,10 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
           </ul>
         </article>
         <article class="thread">
-          <span class="num" aria-hidden="true">iii</span>
+          <span class="num" aria-hidden="true">iv</span>
           <h3>The augmented performer</h3>
           <p>Working with coders and visual artists, I explore how technology can extend what a live musician can do. That might be a pianist duetting with an improvising computer, or an improvisation that is turned into projected visuals in real time, so the performer tells a visual story as well as a musical one.</p>
+          <p class="roots">This thread is new since my doctorate: <a href="#wmanhattan-circus" data-work>Manhattan Circus</a> (2017) was the first piece in it.</p>
           <ul>
             <li><a href="#wconcerto-for-augmented-piano-and-small-orchestra" data-work>Concerto for Augmented Piano</a><span>2025</span></li>
             <li><a href="#wpiano-mapping" data-work>Piano Mapping</a><span>2022–</span></li>
@@ -310,6 +336,14 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
             <li><a href="#wtenebrae" data-work>Tenebrae</a><span>2016</span></li>
           </ul>
         </article>
+      </div>
+      <div class="doctorate" id="doctorate">
+        <h3>Doctoral research</h3>
+        <p>My PhD in composition (Cardiff University, 2011), supervised by Anthony Powers, Arlene Sierra and Judith Weir, comprises a portfolio of twelve works and a commentary on the processes behind them: interval rows, harmony mapping and melody mapping. Its central concern, in the commentary's words, was "this fusion of the head and heart": processes that keep control of pitch while leaving room for intuitive, improvised choice.</p>
+        <div class="doc-links">
+          <a class="doc" href="docs/phd-commentary.pdf">Commentary <span>PDF, 94 pages</span></a>
+          <a class="doc" href="docs/phd-portfolio.pdf">Portfolio of scores <span>PDF, 449 pages</span></a>
+        </div>
       </div>
     </div>
   </section>
@@ -617,7 +651,7 @@ const NameMusic = (function(){
         <div class="body">
           ${w.desc ? `<p>${esc(w.desc)}</p>` : ''}
           ${w.forces.length ? `<ul class="forces">${w.forces.map(f => `<li>${esc(f)}</li>`).join('')}</ul>` : ''}
-          ${w.media.length ? `<div class="listen">${w.media.map(m => `<a href="${esc(m.url)}" rel="noopener">${esc(m.label)}</a>`).join('')}</div>` : ''}
+          ${(w.media.length || w.phd) ? `<div class="listen">${w.media.map(m => `<a href="${esc(m.url)}" rel="noopener">${esc(m.label)}</a>`).join('')}${w.phd ? `<a href="docs/phd-portfolio.pdf#page=${w.phd}">Score (doctoral portfolio)</a>` : ''}</div>` : ''}
           ${w.perfs.length ? `<div class="ph"><h4>Performances</h4><ul>${w.perfs.map(p => `<li><span class="dt">${esc(p.date)}</span><span>${esc(p.text)}</span></li>`).join('')}</ul></div>` : ''}
         </div>
       </details>`).join('') || '<p class="empty">No works match. Try a different search or filter.</p>';
