@@ -652,14 +652,14 @@ const NameMusic = (function(){
     const term = q.value.trim().toLowerCase();
     const shown = WORKS.filter(w =>
       (cat === 'All' || w.cats.includes(cat)) &&
-      (!rec.checked || w.media.length) &&
+      (!rec.checked || w.media.some(m => m.label !== 'Published score')) &&
       (!term || [w.title, w.desc, w.forces.join(' '), w.perfs.map(p => p.text).join(' '), w.year].join(' ').toLowerCase().includes(term)));
     list.innerHTML = shown.map(w => `
       <details class="work" id="${w.id}">
         <summary>
           <span class="yr">${esc(w.year)}</span>
           <span class="t">${esc(w.title)}<span class="sub">${esc(w.cats.join(' · '))}${w.dur ? ' · ' + esc(w.dur) : ''}</span></span>
-          <span class="badges">${w.new ? '<span class="badge new">New</span>' : ''}${w.media.length ? '<span class="badge">Listen</span>' : ''}${w.perfs.length ? `<span class="badge">${w.perfs.length} perf.</span>` : ''}<span class="tog" aria-hidden="true"></span></span>
+          <span class="badges">${w.new ? '<span class="badge new">New</span>' : ''}${w.media.some(m => m.label !== 'Published score') ? '<span class="badge">Listen</span>' : ''}${w.perfs.length ? `<span class="badge">${w.perfs.length} perf.</span>` : ''}<span class="tog" aria-hidden="true"></span></span>
         </summary>
         <div class="body">
           ${w.desc ? `<p>${esc(w.desc)}</p>` : ''}
