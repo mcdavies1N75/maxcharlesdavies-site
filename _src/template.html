@@ -457,6 +457,18 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 <script>
 const WORKS = __WORKS__;
 
+/* ---------- Links to other sites and PDFs open in a new tab ---------- */
+(function(){
+  function mark(root){
+    root.querySelectorAll('a[href]').forEach(a => {
+      const h = a.getAttribute('href');
+      if (/^https?:\/\//.test(h) || /\.pdf(#|$)/i.test(h)) { a.target = '_blank'; a.rel = 'noopener'; }
+    });
+  }
+  mark(document);
+  new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) mark(n); }))).observe(document.body, {childList:true, subtree:true});
+})();
+
 /* ---------- Name to music (Max's method) ---------- */
 const NameMusic = (function(){
   const NS = 'http://www.w3.org/2000/svg';
