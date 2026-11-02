@@ -96,6 +96,9 @@ section{padding:clamp(3rem,6vw,5rem) 0;border-bottom:1px solid var(--rule)}
 .sec-head .kicker{font-size:var(--step--1);letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:500}
 .two{display:grid;grid-template-columns:minmax(0,1fr);gap:2rem}
 @media (min-width:900px){.two{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:4rem}}
+.photo{margin:0 0 2.75rem}
+.photo img{display:block;width:100%;height:auto;border-radius:2px;background:var(--rule)}
+.photo figcaption{margin-top:.6rem;font-size:var(--step--1);color:var(--muted);max-width:var(--measure)}
 .aside{border-left:2px solid var(--accent);padding-left:1.25rem;font-size:var(--step--1);color:var(--muted);align-self:start}
 .aside h3{font-size:1.05rem;color:var(--ink);margin-bottom:.6rem}
 .aside ul{margin:0;padding:0;list-style:none;display:grid;gap:.35rem}
@@ -236,6 +239,12 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
   </div>
 
   <section id="about">
+    <div class="wrap">
+      <figure class="photo">
+        <img src="img/before-1600.jpg" srcset="img/before-800.jpg 800w, img/before-1600.jpg 1510w" sizes="(max-width: 1120px) 100vw, 1040px" width="1510" height="690" alt="Max Charles Davies standing in front of an orchestra beside a white grand piano with a laptop on it, smiling towards the audience" loading="lazy">
+        <figcaption>Before the premiere of my <i>Concerto for Augmented Piano and Orchestra</i>, Urban Crofters, Cardiff, March 2025. Photo: Keith Bloggs</figcaption>
+      </figure>
+    </div>
     <div class="wrap two">
       <div>
         <div class="sec-head"><span class="kicker">About</span><h2>Roadmap and intuition</h2></div>
@@ -261,6 +270,10 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
   <section id="research">
     <div class="wrap">
       <div class="sec-head"><span class="kicker">Research through composition</span><h2>Three threads run through my work</h2></div>
+      <figure class="photo">
+        <img src="img/during-1600.jpg" srcset="img/during-800.jpg 800w, img/during-1600.jpg 1600w" sizes="(max-width: 1120px) 100vw, 1040px" width="1600" height="720" alt="Max Charles Davies playing a white grand piano with a painted landscape projected onto its lid, surrounded by an orchestra and conductor in a darkened hall" loading="lazy">
+        <figcaption>Performing my <i>Concerto for Augmented Piano and Orchestra</i> with Roath Chamber Orchestra, conducted by James Grindle, with visuals by Rahil Al Jassasi. Urban Crofters, Cardiff, March 2025. Photo: Keith Bloggs</figcaption>
+      </figure>
       <div class="threads">
         <article class="thread">
           <span class="num" aria-hidden="true">i</span>
@@ -331,7 +344,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
     <div class="wrap">
       <div class="sec-head"><span class="kicker">Selected performances</span><h2>Where the music has been heard</h2></div>
       <ul class="perf">
-        <li><span class="y">2025</span><div><span class="w">Concerto for Augmented Piano and Orchestra</span><div class="d">Rahil Al Jassasi and Max Charles Davies, Roath Chamber Orchestra, cond. James Grindle. Urban Crofters, Cardiff</div></div></li>
+        <li><span class="y">2025</span><div><span class="w">Concerto for Augmented Piano and Orchestra</span><div class="d">Max Charles Davies (augmented piano), with visuals by Rahil Al Jassasi. Roath Chamber Orchestra, cond. James Grindle. Urban Crofters, Cardiff</div></div></li>
         <li><span class="y">2021</span><div><span class="w">Moving Hues (revised version)</span><div class="d">APO: The Professionals, cond. Andrew Taylor. The Hexagon, Reading</div></div></li>
         <li><span class="y">2019</span><div><span class="w">Y Gors Fawr</span><div class="d">Côr Crymych a'r Cylch. BBC Radio 3 broadcast, Adopt a Composer scheme (Making Music, Sound and Music, PRS Foundation)</div></div></li>
         <li><span class="y">2018</span><div><span class="w">Y Gors Fawr</span><div class="d">Côr Crymych a'r Cylch. National Eisteddfod, Wales Millennium Centre, Cardiff</div></div></li>
