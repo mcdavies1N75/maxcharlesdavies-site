@@ -355,28 +355,46 @@ const NameMusic = (function(){
     return notes;
   }
 
-  let ctx = null, busy = false;
+  let ctx = null, cur = null; // cur: the performance now playing, so it can be stopped
+  const PLAY_ICON = '<path d="M1 0l9 5-9 5z"/>', STOP_ICON = '<rect x="1" y="1" width="8" height="8"/>';
+  function setBtn(btn, playing, idleText){
+    const span = btn.querySelector('span'), svg = btn.querySelector('svg');
+    span.textContent = playing ? 'Stop' : idleText;
+    if (svg) svg.innerHTML = playing ? STOP_ICON : PLAY_ICON;
+  }
+  function stop(){
+    if (!cur) return;
+    const c = cur; cur = null;
+    c.timers.forEach(clearTimeout);
+    const now = ctx.currentTime;
+    c.master.gain.cancelScheduledValues(now); c.master.gain.setValueAtTime(c.master.gain.value, now); c.master.gain.linearRampToValueAtTime(0, now + 0.05);
+    c.oscs.forEach(o => { try { o.stop(now + 0.06); } catch (e) {} });
+    c.notes.forEach(m => m.g.classList.remove('on'));
+    setBtn(c.btn, false, c.idleText);
+  }
   async function play(getNotes, btn, idleText){
-    if (busy) return;
-    const span = btn.querySelector('span');
+    if (cur) { const same = cur.btn === btn; stop(); if (same) return; } // pressing again stops it
     try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); await ctx.resume(); }
-    catch (e) { span.textContent = 'Audio unavailable here'; return; }
+    catch (e) { btn.querySelector('span').textContent = 'Audio unavailable here'; return; }
     const notes = getNotes(); if (!notes.length) return;
-    busy = true; span.textContent = 'Playing…';
+    const master = ctx.createGain(); master.gain.value = 1; master.connect(ctx.destination);
+    const me = {btn, idleText, notes, master, oscs:[], timers:[]}; cur = me;
+    setBtn(btn, true, idleText);
     let t = ctx.currentTime + 0.05; const dur = 0.34;
     notes.forEach(n => {
       const delay = (t - ctx.currentTime) * 1000;
-      setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); n.g.classList.add('on'); }, delay);
+      me.timers.push(setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); n.g.classList.add('on'); }, delay));
       if (n.f) {
         const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), g2 = ctx.createGain();
         o.type = 'triangle'; o.frequency.value = n.f; o2.type = 'sine'; o2.frequency.value = n.f * 2; g2.gain.value = 0.15;
-        o.connect(g); o2.connect(g2); g2.connect(g); g.connect(ctx.destination);
+        o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master);
         g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 2.2);
         o.start(t); o2.start(t); o.stop(t + dur * 2.3); o2.stop(t + dur * 2.3);
+        me.oscs.push(o, o2);
       }
       t += n.wordEnd ? dur * 1.8 : dur;
     });
-    setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); busy = false; span.textContent = idleText; }, (t - ctx.currentTime) * 1000 + 400);
+    me.timers.push(setTimeout(() => { if (cur !== me) return; notes.forEach(m => m.g.classList.remove('on')); cur = null; setBtn(btn, false, idleText); }, (t - ctx.currentTime) * 1000 + 400));
   }
   return {MAP, PITCHES, I_OPTS, pretty, words, analyse, draw, play};
 })();
