@@ -5,11 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Max Charles Davies, Composer</title>
 <meta name="description" content="Max Charles Davies is a composer interested in the music that is already present in things: in names, words, places and texts. Works, research, performances and contact.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Music&text=%F0%9D%84%9E%E2%99%AD%E2%99%AE%E2%99%AF&display=swap" rel="stylesheet">
-<style>
+ <style>
+@font-face{font-family:"Bodoni Moda";font-style:normal;font-display:swap;font-weight:400 900;src:url(fonts/bodoni-moda-latin-opsz-normal.woff2) format("woff2-variations"),url(fonts/bodoni-moda-latin-opsz-normal.woff2) format("woff2")}
+@font-face{font-family:"Bodoni Moda";font-style:italic;font-display:swap;font-weight:400 900;src:url(fonts/bodoni-moda-latin-opsz-italic.woff2) format("woff2-variations"),url(fonts/bodoni-moda-latin-opsz-italic.woff2) format("woff2")}
+@font-face{font-family:"Public Sans";font-style:normal;font-display:swap;font-weight:400;src:url(fonts/public-sans-latin-400-normal.woff2) format("woff2")}
+@font-face{font-family:"Public Sans";font-style:italic;font-display:swap;font-weight:400;src:url(fonts/public-sans-latin-400-italic.woff2) format("woff2")}
+@font-face{font-family:"Public Sans";font-style:normal;font-display:swap;font-weight:500;src:url(fonts/public-sans-latin-500-normal.woff2) format("woff2")}
+@font-face{font-family:"Public Sans";font-style:normal;font-display:swap;font-weight:600;src:url(fonts/public-sans-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:"Noto Music";font-style:normal;font-display:block;font-weight:400;src:url(fonts/noto-music-symbols.woff2) format("woff2");unicode-range:U+266D-266F,U+1D11E}
 :root{
   /* Layout idea: an engraved score page. One bold moment (the name as a melody on a stave), everything else set quietly in columns like a programme book. */
   --paper:#F3F4F1;
@@ -453,7 +456,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
     </div>
   </section>
 </main>
-<footer><div class="wrap">© 2026 Max Charles Davies</div></footer>
+<footer><div class="wrap">© 2026 Max Charles Davies · This site doesn't use cookies or tracking.</div></footer>
 
 <script>
 const WORKS = __WORKS__;
