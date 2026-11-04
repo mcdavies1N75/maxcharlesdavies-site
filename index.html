@@ -12,7 +12,7 @@
 @font-face{font-family:"Public Sans";font-style:italic;font-display:swap;font-weight:400;src:url(fonts/public-sans-latin-400-italic.woff2) format("woff2")}
 @font-face{font-family:"Public Sans";font-style:normal;font-display:swap;font-weight:500;src:url(fonts/public-sans-latin-500-normal.woff2) format("woff2")}
 @font-face{font-family:"Public Sans";font-style:normal;font-display:swap;font-weight:600;src:url(fonts/public-sans-latin-600-normal.woff2) format("woff2")}
-@font-face{font-family:"Noto Music";font-style:normal;font-display:block;font-weight:400;src:url(fonts/noto-music-symbols.woff2) format("woff2");unicode-range:U+266D-266F,U+1D11E}
+@font-face{font-family:"Noto Music";font-style:normal;font-display:block;font-weight:400;src:url(fonts/noto-music-symbols.woff2) format("woff2");unicode-range:U+266D-266F,U+1D112,U+1D11E}
 :root{
   /* Layout idea: an engraved score page. One bold moment (the name as a melody on a stave), everything else set quietly in columns like a programme book. */
   --paper:#F3F4F1;
@@ -76,7 +76,8 @@ em,i{font-style:italic}
 .stave .pitch{font-family:var(--font-display);font-style:italic;font-size:13px;fill:var(--accent);text-anchor:middle}
 .stave .clef{font-family:"Noto Music","Bravura","Segoe UI Symbol",serif;font-size:76px;fill:var(--ink)}
 .stave .note{transition:transform .15s}
-  .stave .acc{font-family:"Noto Music","Segoe UI Symbol",serif;font-size:26px;fill:var(--ink)}
+  .stave .breath{font-family:"Noto Music","Segoe UI Symbol",serif;font-size:30px;fill:var(--ink)}
+.stave .acc{font-family:"Noto Music","Segoe UI Symbol",serif;font-size:26px;fill:var(--ink)}
 .stave .note.on .acc{fill:var(--accent)}
 .stave .chosen .pitch{fill:var(--muted)}
 .stave .note.on .flat{fill:var(--accent)}
@@ -529,6 +530,7 @@ const NameMusic = (function(){
         notes[notes.length - 1].wordEnd = true;
         const bx = x - spacing/2 + 4;
         g0.appendChild(el('line', {class:'bar', x1:bx, x2:bx, y1:bottom - 4*gap, y2:bottom}));
+        if (!(ri === rows.length - 1 && wi === row.length - 1)) { const br = el('text', {class:'breath', x:bx - 14, y:bottom - 4*gap + 7}); br.textContent = '\u{1D112}'; g0.appendChild(br); } // breath mark at the end of each word
         if (ri === rows.length - 1 && wi === row.length - 1) g0.appendChild(el('line', {class:'bar', x1:bx+5, x2:bx+5, y1:bottom - 4*gap, y2:bottom, 'stroke-width':4}));
         x += 10;
       });
@@ -567,11 +569,12 @@ const NameMusic = (function(){
     // A piano-like tone: a few harmonics with a natural decay, so notes ring into each other.
     master.gain.value = 0.55;
     let t = ctx.currentTime + 0.05; const dur = 0.36, ring = 2.2;
+    let word = ctx.createGain(); word.connect(master);
     notes.forEach((n, k) => {
       const delay = (t - ctx.currentTime) * 1000;
       me.timers.push(setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); n.g.classList.add('on'); }, delay));
       if (n.f) {
-        const g = ctx.createGain(); g.connect(master);
+        const g = ctx.createGain(); g.connect(word);
         g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.32, t + 0.008);
         g.gain.exponentialRampToValueAtTime(0.12, t + 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + ring);
         [[1, 1], [2, 0.32], [3, 0.12], [4, 0.06]].forEach(([h, a]) => {
@@ -580,8 +583,13 @@ const NameMusic = (function(){
           o.connect(og); og.connect(g); o.start(t); o.stop(t + ring + 0.05); me.oscs.push(o);
         });
       }
-      // Hold the last note of each word a little longer (a tenuto), rather than leaving a silence.
-      t += n.wordEnd && k < notes.length - 1 ? dur * 1.7 : dur;
+      if (n.wordEnd && k < notes.length - 1) {
+        // Breath mark: hold the last note a little, lift the sound, then a short breath before the next word.
+        const lift = t + dur * 1.5;
+        word.gain.setValueAtTime(1, lift); word.gain.exponentialRampToValueAtTime(0.0001, lift + 0.09);
+        t = lift + 0.16;
+        word = ctx.createGain(); word.connect(master);
+      } else t += dur;
     });
     t += ring - dur;
     me.timers.push(setTimeout(() => { if (cur !== me) return; notes.forEach(m => m.g.classList.remove('on')); cur = null; setBtn(btn, false, idleText); }, (t - ctx.currentTime) * 1000 + 400));
