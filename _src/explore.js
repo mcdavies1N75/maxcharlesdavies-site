@@ -118,6 +118,7 @@
   }
   try { const q = new URLSearchParams(location.search).get('name') || sessionStorage.getItem('mcd-name'); if (q) input.value = q.slice(0, 40); } catch (e) {}
   input.addEventListener('input', carry);
+  input.addEventListener('focus', () => input.select());
   cards.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; picks[s.dataset.k] = +s.value; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
   input.addEventListener('input', update);
   narrow.addEventListener('change', update);

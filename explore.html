@@ -136,7 +136,7 @@ section{padding:clamp(3rem,6vw,5rem) 0;border-bottom:1px solid var(--rule)}
 a.w{color:var(--ink);text-decoration:none}
 a.w:hover{color:var(--accent);text-decoration:underline}
 .perf .d{color:var(--muted);font-size:var(--step--1)}
-@media (min-width:860px){.perf{grid-template-columns:1fr 1fr;column-gap:3rem}}
+@media (min-width:860px){.perf{display:block;columns:2;column-gap:3rem}.perf li{break-inside:avoid}}
 .perf-note{max-width:var(--measure);margin:2rem 0 0;padding-top:1.25rem;border-top:1px solid var(--rule);color:var(--muted)}
 
 /* works */
@@ -192,7 +192,9 @@ a.w:hover{color:var(--accent);text-decoration:underline}
 .namer{display:grid;gap:1rem}
 .field-label{font-size:var(--step--1);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
 .namer-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
-.namer-row input{font-family:var(--font-display);font-size:var(--step-2);color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ink);padding:.2rem 0;flex:1 1 16rem;min-width:0}
+.field-label .hint{text-transform:none;letter-spacing:0;font-weight:400}
+.namer-row input:hover,.namer-row input:focus{background:var(--accent-soft)}
+.namer-row input{padding-left:.4rem !important;border-radius:4px 4px 0 0;font-family:var(--font-display);font-size:var(--step-2);color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ink);padding:.2rem 0;flex:1 1 16rem;min-width:0}
 .btn:disabled{opacity:.4;cursor:default}
 .choices{display:grid;gap:.5rem}
 .choice{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;font-size:var(--step--1);padding:.55rem .8rem;border-left:2px solid var(--rule);background:transparent}
@@ -255,7 +257,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
       <div class="sec-head"><span class="kicker">Max Charles Davies, composer</span><h2>Inside the constraint</h2></div>
       <p class="intro">My rules give one answer, but most letters can be found in several note names. The table sets the limits; within them, I choose by ear.</p>
       <p class="lead">Each letter below lists the notes it can become. A to G always stay themselves, except that B can also be B♭, as in German, and K, R, T, U and Y each have one fixed note. Other letters count only if they begin a note name or are its second letter, as in <i>eS</i> or <i>mI</i>, and my own rules are always included. Change any of them and listen to the difference.</p>
-      <label for="xname" class="field-label">Your name</label>
+      <label for="xname" class="field-label">Type a name here <span class="hint">(replace the example)</span></label>
       <div class="namer-row">
         <input id="xname" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="Max Charles Davies">
         <button class="btn" id="xplay" type="button"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play</span></button>
@@ -386,20 +388,26 @@ const NameMusic = (function(){
     const master = ctx.createGain(); master.gain.value = 1; master.connect(ctx.destination);
     const me = {btn, idleText, notes, master, oscs:[], timers:[]}; cur = me;
     setBtn(btn, true, idleText);
-    let t = ctx.currentTime + 0.05; const dur = 0.34;
-    notes.forEach(n => {
+    // A piano-like tone: a few harmonics with a natural decay, so notes ring into each other.
+    master.gain.value = 0.55;
+    let t = ctx.currentTime + 0.05; const dur = 0.36, ring = 2.2;
+    notes.forEach((n, k) => {
       const delay = (t - ctx.currentTime) * 1000;
       me.timers.push(setTimeout(() => { notes.forEach(m => m.g.classList.remove('on')); n.g.classList.add('on'); }, delay));
       if (n.f) {
-        const o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), g2 = ctx.createGain();
-        o.type = 'triangle'; o.frequency.value = n.f; o2.type = 'sine'; o2.frequency.value = n.f * 2; g2.gain.value = 0.15;
-        o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master);
-        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.22, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur * 2.2);
-        o.start(t); o2.start(t); o.stop(t + dur * 2.3); o2.stop(t + dur * 2.3);
-        me.oscs.push(o, o2);
+        const g = ctx.createGain(); g.connect(master);
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.32, t + 0.008);
+        g.gain.exponentialRampToValueAtTime(0.12, t + 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + ring);
+        [[1, 1], [2, 0.32], [3, 0.12], [4, 0.06]].forEach(([h, a]) => {
+          const o = ctx.createOscillator(), og = ctx.createGain();
+          o.type = 'sine'; o.frequency.value = n.f * h; o.detune.value = (h - 1) * 1.5; og.gain.value = a;
+          o.connect(og); og.connect(g); o.start(t); o.stop(t + ring + 0.05); me.oscs.push(o);
+        });
       }
-      t += n.wordEnd ? dur * 1.8 : dur;
+      // Hold the last note of each word a little longer (a tenuto), rather than leaving a silence.
+      t += n.wordEnd && k < notes.length - 1 ? dur * 1.7 : dur;
     });
+    t += ring - dur;
     me.timers.push(setTimeout(() => { if (cur !== me) return; notes.forEach(m => m.g.classList.remove('on')); cur = null; setBtn(btn, false, idleText); }, (t - ctx.currentTime) * 1000 + 400));
   }
   return {MAP, PITCHES, I_OPTS, pretty, words, analyse, draw, play};
@@ -526,6 +534,7 @@ const NameMusic = (function(){
   }
   try { const q = new URLSearchParams(location.search).get('name') || sessionStorage.getItem('mcd-name'); if (q) input.value = q.slice(0, 40); } catch (e) {}
   input.addEventListener('input', carry);
+  input.addEventListener('focus', () => input.select());
   cards.addEventListener('change', e => { const s = e.target.closest('select'); if (!s) return; picks[s.dataset.k] = +s.value; update(); const again = document.getElementById(s.id); if (again) again.focus(); });
   input.addEventListener('input', update);
   narrow.addEventListener('change', update);

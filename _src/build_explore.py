@@ -21,7 +21,7 @@ xsec = '''  <section id="explore" style="border-bottom:0">
       <div class="sec-head"><span class="kicker">Max Charles Davies, composer</span><h2>Inside the constraint</h2></div>
       <p class="intro">My rules give one answer, but most letters can be found in several note names. The table sets the limits; within them, I choose by ear.</p>
       <p class="lead">Each letter below lists the notes it can become. A to G always stay themselves, except that B can also be B♭, as in German, and K, R, T, U and Y each have one fixed note. Other letters count only if they begin a note name or are its second letter, as in <i>eS</i> or <i>mI</i>, and my own rules are always included. Change any of them and listen to the difference.</p>
-      <label for="xname" class="field-label">Your name</label>
+      <label for="xname" class="field-label">Type a name here <span class="hint">(replace the example)</span></label>
       <div class="namer-row">
         <input id="xname" type="text" maxlength="40" autocomplete="off" spellcheck="false" value="Max Charles Davies">
         <button class="btn" id="xplay" type="button"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play</span></button>
