@@ -408,9 +408,8 @@ const NameMusic = (function(){
         });
       }
       if (n.wordEnd && k < notes.length - 1) {
-        // Breath mark: hold the last note a little, lift the sound, then a short breath before the next word.
+        // Breath mark: hold the last note a little, then a short breath before the next word. Notes keep ringing.
         const lift = t + dur * 1.5;
-        word.gain.setValueAtTime(1, lift); word.gain.exponentialRampToValueAtTime(0.0001, lift + 0.09);
         t = lift + 0.16;
         word = ctx.createGain(); word.connect(master);
       } else t += dur;
