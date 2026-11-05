@@ -23,6 +23,9 @@ CSS='''.cta-wrap{display:grid;gap:.6rem;justify-items:start;margin-top:2.5rem;pa
 idx=t.replace(yn,'').replace(visitor_js,'')
 idx=idx.replace('href="#your-name"','href="name.html"')
 idx=idx.replace('<a href="name.html">Your name</a>','<a href="name.html">Hear your name</a>')
+import json as _jj
+_WW=_jj.loads(open('works.min.json').read())
+idx=idx.replace('__NWORKS__',str(len(_WW))).replace('__NPERF__',str(sum(len(w['perfs']) for w in _WW)))
 open('dist/index.html','w').write(idx.replace('__WORKS__',d))
 # ---------- name.html ----------
 nhead=head.replace('<title>Max Charles Davies, Composer</title>','<title>Hear Your Name, by Max Charles Davies</title>')
@@ -47,4 +50,5 @@ assert vjs!=visitor_js
 name='\n'.join([nhead+'</head>','<body>',nheader,'<main id="top">',sec.replace('<section id="your-name">','<section id="your-name" style="border-bottom:0">'),'</main>',footer,'<script>',nm_js,vjs,'</script>','</body>','</html>'])
 open('dist/name.html','w').write(name)
 exec(open('build_explore.py').read())
+exec(open('build_works.py').read())
 print(len(idx),len(name), 'your-name' in idx, idx.count('name.html'))
