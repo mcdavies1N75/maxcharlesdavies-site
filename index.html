@@ -138,6 +138,11 @@ a.w{color:var(--ink);text-decoration:none}
 a.w:hover{color:var(--accent);text-decoration:underline}
 .perf .d{color:var(--muted);font-size:var(--step--1)}
 @media (min-width:860px){.perf{display:block;columns:2;column-gap:3rem}.perf li{break-inside:avoid}}
+.sec-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;column-gap:2rem;row-gap:0;margin-bottom:2rem}
+.sec-row .sec-head{margin-bottom:0}
+.top-more{font-size:var(--step--1);text-decoration:none;white-space:nowrap;padding-bottom:.45rem;border-bottom:1px solid var(--accent)}
+.top-more:hover{color:var(--ink);border-color:var(--ink)}
+@media (max-width:560px){.top-more{margin-top:.6rem;padding-bottom:.15rem}}
 .more{margin:1.75rem 0 0}
 .more a{display:inline-flex;gap:.5rem;align-items:center;text-decoration:none;border:1px solid var(--accent);border-radius:999px;padding:.55rem 1.2rem}
 .more a:hover{background:var(--accent);color:var(--paper)}
@@ -364,7 +369,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 
   <section id="performances">
     <div class="wrap">
-      <div class="sec-head"><span class="kicker">Selected performances</span><h2>Where the music has been heard</h2></div>
+      <div class="sec-row"><div class="sec-head"><span class="kicker">Selected performances</span><h2>Where the music has been heard</h2></div><a class="top-more" href="works.html#performances">All performances (76) <span aria-hidden="true">→</span></a></div>
       <ul class="perf">
         <li><span class="y">2025</span><div><a class="w" href="#wcome-holy-spirit" data-work>Come, Holy Spirit</a><div class="d">Cardiff University Contemporary Music Group, cond. Robert Fokkens. Cardiff University Concert Hall. Also recorded on the album <i>Only Breath</i> (Tŷ Cerdd)</div></div></li>
         <li><span class="y">2025</span><div><a class="w" href="#wconcerto-for-augmented-piano-and-small-orchestra" data-work>Concerto for Augmented Piano and Orchestra</a><div class="d">Max Charles Davies (augmented piano), with visuals by Rahil Al Jassasi. Roath Chamber Orchestra, cond. James Grindle, in a concert that also included <i>Tiny Symphony</i>. Urban Crofters, Cardiff</div></div></li>
@@ -382,7 +387,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 
   <section id="works">
     <div class="wrap">
-      <div class="sec-head"><span class="kicker">Works</span><h2>Selected works</h2></div>
+      <div class="sec-row"><div class="sec-head"><span class="kicker">Works</span><h2>Selected works</h2></div><a class="top-more" href="works.html#top">Full catalogue (80) <span aria-hidden="true">→</span></a></div>
       <div class="works" id="list" data-selected="wconcerto-for-augmented-piano-and-small-orchestra wy-gors-fawr wmanhattan-circus wtiny-symphony wtiny-sonata wthe-way-of-things wcome-holy-spirit wpoor-form w3-years wwild-with-blue wr-ve wa-book-of-firsts wcells-and-sanctuaries wpanorama wexultet"></div>
       <p class="more"><a href="works.html#top">Full catalogue: all 80 works, with search and filters <span aria-hidden="true">→</span></a></p>
     </div>
