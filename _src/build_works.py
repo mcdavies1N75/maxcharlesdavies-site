@@ -39,7 +39,7 @@ perf_js=r'''/* ---------- Every performance ---------- */
   const all = [];
   WORKS.forEach(w => w.perfs.forEach(p => {
     const m = p.date.match(/(\d\d)\/(\d\d)\/(\d{4})/); if (!m) return;
-    all.push({w, text: p.text, y: m[3], k: m[3] + m[2] + m[1], d: `${+m[1]} ${MON[+m[2] - 1]} ${m[3]}`});
+    all.push({w, links: p.links || [], text: p.text, y: m[3], k: m[3] + m[2] + m[1], d: `${+m[1]} ${MON[+m[2] - 1]} ${m[3]}`});
   }));
   all.sort((a, b) => b.k.localeCompare(a.k));
   // Turn the work's title at the start of the entry into the link, or add it if the entry starts differently.
@@ -56,7 +56,7 @@ perf_js=r'''/* ---------- Every performance ---------- */
   let html = '', yr = '';
   all.forEach(p => {
     if (p.y !== yr) { html += (yr ? '</ul>' : '') + `<h3 class="yr-h">${p.y}</h3><ul class="plist">`; yr = p.y; }
-    html += `<li><span class="dt">${p.d}</span><span>${line(p.text, p.w)}</span></li>`;
+    html += `<li><span class="dt">${p.d}</span><span>${line(p.text, p.w)}${p.links.map(l => ` <a class="src" href="${esc(l.u)}">${esc(l.t)}</a>`).join('')}</span></li>`;
   });
   box.innerHTML = html + '</ul>';
 })();

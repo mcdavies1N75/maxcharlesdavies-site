@@ -193,6 +193,7 @@ a.w:hover{color:var(--accent);text-decoration:underline}
 .work summary:hover .t{color:var(--accent)}
 .work .yr{font-variant-numeric:tabular-nums;font-size:var(--step--1);color:var(--muted)}
 .work .t{font-family:var(--font-body);font-style:italic;font-weight:400;font-size:1.08rem;line-height:1.35}
+.ph .src,.plist .src{font-size:.92em;white-space:nowrap;margin-right:.7em}
 .forces .plain{display:block;color:var(--muted);font-style:italic;margin-top:.1rem}
 .work .sub{display:block;font-family:var(--font-body);font-style:normal;font-size:var(--step--1);color:var(--muted);margin-top:.15rem}
 .work .badges{display:flex;gap:.35rem;align-items:center;white-space:nowrap}
@@ -734,6 +735,7 @@ const NameMusic = (function(){
   const rec = document.getElementById('rec');
   const count = document.getElementById('count');
   const ORDER = ['Orchestral','Choral','Chamber','Large ensemble','Solo','Keyboard','Voice','Opera & music theatre','Multidisciplinary','Electronic & media'];
+  const srcLinks = p => (p.links || []).map(l => ` <a class="src" href="${esc(l.u)}">${esc(l.t)}</a>`).join('');
   const sel = list.dataset.selected ? list.dataset.selected.split(' ') : null;
   let cat = 'All';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -756,7 +758,7 @@ const NameMusic = (function(){
           ${w.desc ? `<p>${esc(w.desc)}</p>` : ''}
           ${w.forces.length ? `<ul class="forces">${w.forces.map((f, i) => `<li>${esc(f)}${w.plain && w.plain[i] ? `<span class="plain">${esc(w.plain[i])}</span>` : ''}</li>`).join('')}</ul>` : ''}
           ${(w.media.length || w.phd) ? `<div class="listen">${w.media.map(m => `<a href="${esc(m.url)}" rel="noopener">${esc(m.label)}</a>`).join('')}${w.phd ? `<a href="docs/phd-portfolio.pdf#page=${w.phd}">Score (doctoral portfolio)</a>` : ''}</div>` : ''}
-          ${w.perfs.length ? `<div class="ph"><h4>Performances</h4><ul>${w.perfs.map(p => `<li><span class="dt">${esc(p.date)}</span><span>${esc(p.text)}</span></li>`).join('')}</ul></div>` : ''}
+          ${w.perfs.length ? `<div class="ph"><h4>Performances</h4><ul>${w.perfs.map(p => `<li><span class="dt">${esc(p.date)}</span><span>${esc(p.text)}${srcLinks(p)}</span></li>`).join('')}</ul></div>` : ''}
         </div>
       </details>`).join('') || '<p class="empty">No works match. Try a different search or filter.</p>';
     if (count) count.textContent = `Showing ${shown.length} of ${WORKS.length} works`;
