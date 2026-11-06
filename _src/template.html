@@ -92,6 +92,14 @@ em,i{font-style:italic}
   #stave .note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 45ms + 150ms)}
   @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 }
+.upcoming{border-left:3px solid var(--accent);background:rgba(42,79,134,.06);padding:1.1rem 1.4rem 1.2rem;margin:0 0 2.25rem;border-radius:0 6px 6px 0}
+.upcoming h3{font-size:var(--step-1);margin:0 0 .6rem}
+.upcoming ul{list-style:none;margin:0;padding:0;display:grid;gap:.85rem}
+.upcoming .when{font-size:var(--step--1);color:var(--muted);font-variant-numeric:tabular-nums}
+.upcoming .ti{font-family:var(--font-display);font-style:italic;font-size:1.12rem}
+.upcoming .ti a{color:var(--ink)}
+.upcoming .tag{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-left:.5rem;font-style:normal;font-family:var(--font-body,inherit)}
+.upcoming .d{font-size:var(--step--1);color:var(--muted)}
 .name-cta{display:flex;width:fit-content;gap:.45rem;align-items:center;margin-top:.8rem;text-decoration:none;border:1px solid var(--accent);border-radius:999px;padding:.5rem 1.1rem;color:var(--accent)}
 .name-cta:hover{background:var(--accent);color:var(--paper)}
 .stave-caption{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;margin-top:.9rem;color:var(--muted);font-size:var(--step--1)}
@@ -404,7 +412,8 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 
   <section id="performances">
     <div class="wrap">
-      <div class="sec-row"><div class="sec-head"><span class="kicker">Selected performances</span><h2>Where the music has been heard</h2></div><a class="top-more" href="works.html#performances">All performances (__NPERF__) <span aria-hidden="true">→</span></a></div>
+      <div class="sec-row"><div class="sec-head"><span class="kicker">Selected performances</span><h2>Where the music has been heard</h2></div><a class="top-more" href="works.html#performances"><span>All performances (<span class="nperf">__NPERF__</span>)</span> <span aria-hidden="true">→</span></a></div>
+      <div class="upcoming" hidden></div>
       <ul class="perf">
         <li><span class="y">2025</span><div><a class="w" href="#wcome-holy-spirit" data-work>Come, Holy Spirit</a><div class="d">Cardiff University Contemporary Music Group, cond. Robert Fokkens. Cardiff University Concert Hall. Also recorded on the album <i>Only Breath</i> (Tŷ Cerdd)</div></div></li>
         <li><span class="y">2025</span><div><a class="w" href="#wconcerto-for-augmented-piano-and-small-orchestra" data-work>Concerto for Augmented Piano and Orchestra</a><div class="d">Max Charles Davies (augmented piano), with visuals by Rahil Al Jassasi. Roath Chamber Orchestra, cond. James Grindle, in a concert that also included <i>Tiny Symphony</i>. Urban Crofters, Cardiff</div></div></li>
@@ -417,7 +426,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         <li><span class="y">2007</span><div><a class="w" href="#wcells-and-sanctuaries" data-work>Cells and Sanctuaries</a><div class="d">BBC Symphony Orchestra, cond. André de Ridder. Maida Vale Studios, London (spnm)</div></div></li>
       </ul>
       <p class="perf-note">My music is also widely performed by community, church, youth and university ensembles. <i>Tiny Symphony</i> has been played by orchestras ranging from the BBC National Orchestra of Wales to schools' and community orchestras. <i>Come, Holy Spirit</i> has been performed regularly since 2015, including as a participatory piece at the CoMA festival. <i>Exodus Canticle</i> has been sung at Easter in most years since 2014.</p>
-      <p class="more"><a href="works.html#performances">All performances (__NPERF__) <span aria-hidden="true">→</span></a></p>
+      <p class="more"><a href="works.html#performances"><span>All performances (<span class="nperf">__NPERF__</span>)</span> <span aria-hidden="true">→</span></a></p>
     </div>
   </section>
 
@@ -468,6 +477,29 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 
 <script>
 const WORKS = __WORKS__;
+
+/* ---------- Coming up: shown until each date passes, then added to the performance history ---------- */
+const UPCOMING = __UPCOMING__;
+(function(){
+  const d = new Date(), pad = n => String(n).padStart(2, '0');
+  const today = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  // Past performances with a date and a catalogue entry join that work's history.
+  UPCOMING.filter(u => u.until < today && u.date && u.work && u.perf).forEach(u => {
+    const w = WORKS.find(w => w.id === u.work);
+    if (w && !w.perfs.some(p => p.date === u.date)) w.perfs.unshift({date: u.date, text: u.perf});
+  });
+  const total = WORKS.reduce((n, w) => n + w.perfs.length, 0);
+  document.querySelectorAll('.nperf').forEach(s => s.textContent = total);
+  const soon = UPCOMING.filter(u => u.until >= today);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  document.querySelectorAll('.upcoming').forEach(box => {
+    if (!soon.length) return;
+    box.innerHTML = '<h3>Coming up</h3><ul>' + soon.map(u => `<li><div class="when">${esc(u.when)}</div>
+      <div class="ti">${u.work ? `<a href="#${u.work}" data-work>${esc(u.title)}</a>` : esc(u.title)}${u.premiere ? '<span class="tag">Premiere</span>' : ''}</div>
+      <div class="d">${esc(u.text)}</div></li>`).join('') + '</ul>';
+    box.hidden = false;
+  });
+})();
 
 /* ---------- Links to other sites and PDFs open in a new tab ---------- */
 (function(){

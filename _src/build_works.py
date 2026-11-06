@@ -26,12 +26,14 @@ wheader=re.sub(r'href="#(?!works"|performances")(\w[\w-]*)"',lambda m:f'href="in
 perf=f'''  <section id="performances" style="border-bottom:0">
     <div class="wrap">
       <div class="sec-head"><span class="kicker">Performances</span><h2>Every performance</h2></div>
-      <p class="page-intro">All {NP} performances and broadcasts I have records of, newest first. Select a title to see the work in the catalogue above.</p>
+      <div class="upcoming" hidden></div>
+      <p class="page-intro">All <span class="nperf">{NP}</span> performances and broadcasts I have records of, newest first. Select a title to see the work in the catalogue above.</p>
       <div id="allperf"></div>
     </div>
   </section>
 '''
 ext_js=cut(t,'/* ---------- Links to other','/* ---------- Name to music')
+up_js=cut(t,'/* ---------- Coming up','/* ---------- Links to other').replace('__UPCOMING__',open('upcoming.json').read().strip())
 cat_js=cut(t,'/* ---------- Works catalogue','</script>')
 perf_js=r'''/* ---------- Every performance ---------- */
 (function(){
@@ -64,6 +66,6 @@ perf_js=r'''/* ---------- Every performance ---------- */
 })();
 
 '''
-works_page='\n'.join([whead+'</head>','<body>',wheader,'<main id="top">',full,perf,'</main>','<a class="float-back" href="index.html"><span aria-hidden="true">←</span> Back to the homepage</a>',footer,'<script>',"/* Arriving without a section link: start at the top of the page. */\nif ('scrollRestoration' in history) history.scrollRestoration = 'manual';\nif (!location.hash || location.hash === '#top') { const top = () => scrollTo(0, 0); top(); addEventListener('DOMContentLoaded', top); addEventListener('load', () => { top(); setTimeout(top, 60); setTimeout(top, 300); }); }",'const WORKS = '+d+';','',ext_js,perf_js,cat_js,'</script>','</body>','</html>'])
+works_page='\n'.join([whead+'</head>','<body>',wheader,'<main id="top">',full,perf,'</main>','<a class="float-back" href="index.html"><span aria-hidden="true">←</span> Back to the homepage</a>',footer,'<script>',"/* Arriving without a section link: start at the top of the page. */\nif ('scrollRestoration' in history) history.scrollRestoration = 'manual';\nif (!location.hash || location.hash === '#top') { const top = () => scrollTo(0, 0); top(); addEventListener('DOMContentLoaded', top); addEventListener('load', () => { top(); setTimeout(top, 60); setTimeout(top, 300); }); }",'const WORKS = '+d+';','',up_js,ext_js,perf_js,cat_js,'</script>','</body>','</html>'])
 open('dist/works.html','w').write(works_page)
 print('works.html',len(works_page),NW,NP)

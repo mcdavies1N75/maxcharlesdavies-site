@@ -26,6 +26,8 @@ idx=idx.replace('<a href="name.html">Your name</a>','<a href="name.html">Hear yo
 import json as _jj
 _WW=_jj.loads(open('works.min.json').read())
 idx=idx.replace('__NWORKS__',str(len(_WW))).replace('__NPERF__',str(sum(len(w['perfs']) for w in _WW)))
+UP=open('upcoming.json').read().strip()
+idx=idx.replace('__UPCOMING__',UP)
 open('dist/index.html','w').write(idx.replace('__WORKS__',d))
 # ---------- name.html ----------
 nhead=head.replace('<title>Max Charles Davies, Composer</title>','<title>Hear Your Name, by Max Charles Davies</title>')

@@ -92,6 +92,14 @@ em,i{font-style:italic}
   #stave .note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 45ms + 150ms)}
   @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 }
+.upcoming{border-left:3px solid var(--accent);background:rgba(42,79,134,.06);padding:1.1rem 1.4rem 1.2rem;margin:0 0 2.25rem;border-radius:0 6px 6px 0}
+.upcoming h3{font-size:var(--step-1);margin:0 0 .6rem}
+.upcoming ul{list-style:none;margin:0;padding:0;display:grid;gap:.85rem}
+.upcoming .when{font-size:var(--step--1);color:var(--muted);font-variant-numeric:tabular-nums}
+.upcoming .ti{font-family:var(--font-display);font-style:italic;font-size:1.12rem}
+.upcoming .ti a{color:var(--ink)}
+.upcoming .tag{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-left:.5rem;font-style:normal;font-family:var(--font-body,inherit)}
+.upcoming .d{font-size:var(--step--1);color:var(--muted)}
 .name-cta{display:flex;width:fit-content;gap:.45rem;align-items:center;margin-top:.8rem;text-decoration:none;border:1px solid var(--accent);border-radius:999px;padding:.5rem 1.1rem;color:var(--accent)}
 .name-cta:hover{background:var(--accent);color:var(--paper)}
 .stave-caption{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;margin-top:.9rem;color:var(--muted);font-size:var(--step--1)}
