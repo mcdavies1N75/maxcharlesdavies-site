@@ -9,7 +9,7 @@ WCSS=CSS+'''.yr-h{font-size:var(--step-1);margin:2rem 0 .3rem}
 .plist{list-style:none;margin:0;padding:0}
 .plist li{display:grid;grid-template-columns:6.5rem minmax(0,1fr);gap:1rem;padding:.65rem 0;border-top:1px solid var(--rule);font-size:var(--step--1);color:var(--muted)}
 .plist .dt{font-variant-numeric:tabular-nums}
-.plist a{font-family:var(--font-display);font-style:italic;font-size:1.08rem;color:var(--ink)}
+.plist a{font-family:var(--font-body);font-style:italic;font-weight:400;font-size:1.02rem;color:var(--ink)}
 .plist a:hover{color:var(--accent)}
 .page-intro{max-width:var(--measure);margin:0 0 2rem}
 @media (max-width:560px){.plist li{grid-template-columns:minmax(0,1fr);gap:.1rem}}

@@ -1,5 +1,10 @@
 import re
-t=open('template.html').read(); d=open('works.min.json').read().replace('</','<\\/')
+t=open('template.html').read(); import json as _js, orch as _orch
+_wd=_js.loads(open('works.min.json').read())
+for _w in _wd:
+    _p=[_orch.plain(f) for f in _w['forces']]
+    if any(_p): _w['plain']=_p
+d=_js.dumps(_wd,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')
 def cut(s,a,b):
     i=s.index(a); j=s.index(b,i); return s[i:j]
 head=t[:t.index('</head>')]
