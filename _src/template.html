@@ -92,6 +92,8 @@ em,i{font-style:italic}
   #stave .note{animation:rise .5s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i) * 45ms + 150ms)}
   @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 }
+.name-cta{display:flex;width:fit-content;gap:.45rem;align-items:center;margin-top:.8rem;text-decoration:none;border:1px solid var(--accent);border-radius:999px;padding:.5rem 1.1rem;color:var(--accent)}
+.name-cta:hover{background:var(--accent);color:var(--paper)}
 .stave-caption{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem 1.25rem;margin-top:.9rem;color:var(--muted);font-size:var(--step--1)}
 .btn{font:inherit;font-size:var(--step--1);font-weight:500;color:var(--paper);background:var(--ink);border:0;border-radius:999px;padding:.5rem 1rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
 .btn:hover{background:var(--accent)}
@@ -254,7 +256,7 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         </svg>
         <div class="stave-caption">
           <button class="btn" id="play" type="button" aria-describedby="stave-title"><svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z"/></svg><span>Play my name</span></button>
-          <span>The letters of my name, mapped to musical pitches. Many of my pieces begin this way, with words connected to the piece turned into notes and developed from there. <a href="#your-name">See how the mapping works, and try it with your name.</a></span>
+          <span>The letters of my name, mapped to musical pitches. Many of my pieces begin this way, with words connected to the piece turned into notes and developed from there.<a class="name-cta" href="#your-name">See how it works, and try it with your name <span aria-hidden="true">→</span></a></span>
         </div>
       </div>
 
