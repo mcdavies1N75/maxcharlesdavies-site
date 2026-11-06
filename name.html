@@ -251,6 +251,11 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
 .cta:hover .arr{transform:translateX(4px)}
 .cta-note{font-size:var(--step--1);color:var(--muted);margin:0}
 @media (max-width:560px){.cta{width:100%;justify-content:center;padding:1rem 1.2rem}}
+body{padding-bottom:4.5rem}
+.float-back{position:fixed;left:1.25rem;bottom:1.25rem;z-index:50;display:inline-flex;align-items:center;gap:.45rem;font-size:var(--step--1);text-decoration:none;color:var(--paper);background:var(--accent);border-radius:999px;padding:.6rem 1.1rem;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.float-back:hover{background:var(--ink);color:var(--paper)}
+@media (max-width:560px){.float-back{left:.75rem;bottom:.75rem}}
+@media (prefers-reduced-motion: no-preference){.float-back.nudge{animation:nudge 1.2s ease 2}}
 @media (prefers-reduced-motion: no-preference){.cta.nudge{animation:nudge 1.2s ease 2}@keyframes nudge{0%,100%{transform:none}50%{transform:scale(1.04)}}}
 .back-simple{margin:1.5rem 0 0;font-size:var(--step--1)}
 .intro{font-family:var(--font-display);font-style:italic;font-size:var(--step-1);max-width:40ch;margin:0 0 1rem;line-height:1.35}
@@ -297,15 +302,12 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         <svg class="stave" id="stave2" role="img" aria-label="Your name written as notes on a stave"><title>Your name written as notes on a stave</title></svg>
       </div>
       <p class="back-simple"><a href="explore.html">Go deeper: every note each letter could become →</a></p>
-      <div class="cta-wrap">
-        <a class="cta" id="cta" href="index.html">Explore my music <span class="arr" aria-hidden="true">→</span></a>
-        <p class="cta-note">Works, recordings and research on my homepage</p>
-      </div>
     </div>
   </section>
 
 
 </main>
+<a class="float-back" id="cta" href="index.html"><span aria-hidden="true">←</span> Back to my music</a>
 <footer><div class="wrap">© 2026 Max Charles Davies · This site doesn't use cookies or tracking.</div></footer>
 <script>
 /* ---------- Name to music (Max's method) ---------- */

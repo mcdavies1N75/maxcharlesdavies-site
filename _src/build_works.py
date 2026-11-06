@@ -12,10 +12,6 @@ WCSS=CSS+'''.yr-h{font-size:var(--step-1);margin:2rem 0 .3rem}
 .plist a{font-family:var(--font-display);font-style:italic;font-size:1.08rem;color:var(--ink)}
 .plist a:hover{color:var(--accent)}
 .page-intro{max-width:var(--measure);margin:0 0 2rem}
-.float-back{position:fixed;left:1.25rem;bottom:1.25rem;z-index:50;display:inline-flex;align-items:center;gap:.45rem;font-size:var(--step--1);text-decoration:none;color:var(--paper);background:var(--accent);border-radius:999px;padding:.6rem 1.1rem;box-shadow:0 4px 14px rgba(0,0,0,.18)}
-.float-back:hover{background:var(--ink);color:var(--paper)}
-body{padding-bottom:4.5rem}
-@media (max-width:560px){.float-back{left:.75rem;bottom:.75rem}}
 @media (max-width:560px){.plist li{grid-template-columns:minmax(0,1fr);gap:.1rem}}
 '''
 whead=head.replace('<title>Max Charles Davies, Composer</title>','<title>Works and Performances, by Max Charles Davies</title>')

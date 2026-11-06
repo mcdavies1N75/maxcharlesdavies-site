@@ -31,12 +31,8 @@ xsec = '''  <section id="explore" style="border-bottom:0">
       <svg class="stave" id="stave3" role="img" aria-label="The name written as notes on a stave"><title>The name written as notes on a stave</title></svg>
       <div id="cards" class="cards"></div>
       <p class="back-simple"><a href="name.html">Back to the simple version</a></p>
-      <div class="cta-wrap">
-        <a class="cta" id="cta" href="index.html">Explore my music <span class="arr" aria-hidden="true">→</span></a>
-        <p class="cta-note">Works, recordings and research on my homepage</p>
-      </div>
     </div>
   </section>'''
 xjs = open('explore.js').read()
-explore = '\n'.join([xhead + '</head>', '<body>', nheader, '<main id="top">', xsec, '</main>', footer, '<script>', nm_js, xjs, '</script>', '</body>', '</html>'])
+explore = '\n'.join([xhead + '</head>', '<body>', nheader, '<main id="top">', xsec, '</main>', '<a class="float-back" id="cta" href="index.html"><span aria-hidden="true">←</span> Back to my music</a>', footer, '<script>', nm_js, xjs, '</script>', '</body>', '</html>'])
 open('dist/explore.html', 'w').write(explore)

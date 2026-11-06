@@ -15,6 +15,11 @@ CSS='''.cta-wrap{display:grid;gap:.6rem;justify-items:start;margin-top:2.5rem;pa
 .cta:hover .arr{transform:translateX(4px)}
 .cta-note{font-size:var(--step--1);color:var(--muted);margin:0}
 @media (max-width:560px){.cta{width:100%;justify-content:center;padding:1rem 1.2rem}}
+body{padding-bottom:4.5rem}
+.float-back{position:fixed;left:1.25rem;bottom:1.25rem;z-index:50;display:inline-flex;align-items:center;gap:.45rem;font-size:var(--step--1);text-decoration:none;color:var(--paper);background:var(--accent);border-radius:999px;padding:.6rem 1.1rem;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.float-back:hover{background:var(--ink);color:var(--paper)}
+@media (max-width:560px){.float-back{left:.75rem;bottom:.75rem}}
+@media (prefers-reduced-motion: no-preference){.float-back.nudge{animation:nudge 1.2s ease 2}}
 @media (prefers-reduced-motion: no-preference){.cta.nudge{animation:nudge 1.2s ease 2}@keyframes nudge{0%,100%{transform:none}50%{transform:scale(1.04)}}}
 .back-simple{margin:1.5rem 0 0;font-size:var(--step--1)}
 .intro{font-family:var(--font-display);font-style:italic;font-size:var(--step-1);max-width:40ch;margin:0 0 1rem;line-height:1.35}
@@ -39,17 +44,13 @@ sec=yn.replace('<span class="kicker">Try it</span><h2>Hear your own name</h2>','
 sec=sec.replace('<p class="lead">Type your name','<p class="intro">Many of my pieces begin with something that already exists, such as a name or a line of poetry. Here is the first step: mapping letters to pitches.</p>\n      <p class="lead">Type your name')
 sec=sec.replace('      </div>\n    </div>\n  </section>','''      </div>
       <p class="back-simple"><a href="explore.html">Go deeper: every note each letter could become →</a></p>
-      <div class="cta-wrap">
-        <a class="cta" id="cta" href="index.html">Explore my music <span class="arr" aria-hidden="true">→</span></a>
-        <p class="cta-note">Works, recordings and research on my homepage</p>
-      </div>
     </div>
   </section>''')
-assert 'id="cta"' in sec
+assert 'explore.html' in sec
 vjs=visitor_js.replace("btn.addEventListener('click', e => NameMusic.play(() => notes, e.currentTarget, 'Play'));",
  "btn.addEventListener('click', e => { NameMusic.play(() => notes, e.currentTarget, 'Play'); const c = document.getElementById('cta'); setTimeout(() => { c.classList.remove('nudge'); void c.offsetWidth; c.classList.add('nudge'); }, notes.length * 360 + 600); });")
 assert vjs!=visitor_js
-name='\n'.join([nhead+'</head>','<body>',nheader,'<main id="top">',sec.replace('<section id="your-name">','<section id="your-name" style="border-bottom:0">'),'</main>',footer,'<script>',nm_js,vjs,'</script>','</body>','</html>'])
+name='\n'.join([nhead+'</head>','<body>',nheader,'<main id="top">',sec.replace('<section id="your-name">','<section id="your-name" style="border-bottom:0">'),'</main>','<a class="float-back" id="cta" href="index.html"><span aria-hidden="true">←</span> Back to my music</a>',footer,'<script>',nm_js,vjs,'</script>','</body>','</html>'])
 open('dist/name.html','w').write(name)
 exec(open('build_explore.py').read())
 exec(open('build_works.py').read())
