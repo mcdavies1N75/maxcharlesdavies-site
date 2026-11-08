@@ -118,6 +118,11 @@ em,i{font-style:italic}
 .btn{font:inherit;font-size:var(--step--1);font-weight:500;color:var(--paper);background:var(--ink);border:0;border-radius:999px;padding:.5rem 1rem;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem}
 .btn:hover{background:var(--accent)}
 .btn svg{width:.8em;height:.8em;fill:currentColor}
+.glance{display:grid;grid-template-columns:minmax(0,1fr);gap:1.1rem 2.5rem;margin:2.25rem 0 0;padding:1.4rem 0 0;border-top:1px solid var(--rule)}
+@media (min-width:760px){.glance{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.glance div{margin:0}
+.glance dt{font-size:var(--step--1);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:.3rem}
+.glance dd{margin:0;max-width:var(--measure)}
 .hero-links{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem;margin-top:1.75rem;font-size:var(--step--1)}
 
 /* sections */
@@ -282,6 +287,13 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
         </div>
       </div>
 
+      <dl class="glance" aria-label="At a glance">
+        <div><dt>I write</dt><dd>Chamber, orchestral and choral music, including music for the liturgy, as well as opera, music theatre and electronic work. Some pieces extend live performance with technology that I conceive as part of the composition and develop with collaborators.</dd></div>
+        <div><dt>I perform</dt><dd>As a pianist, cellist, singer and jazz keyboardist, and as a conductor of orchestras and choirs.</dd></div>
+        <div><dt>Commissions welcome</dt><dd>From professional, amateur, youth and church ensembles, and from performers and artists looking to collaborate.</dd></div>
+        <div><dt>Also</dt><dd>Trained at the Royal College of Music, with a PhD in Composition from Cardiff University. I <a href="#teaching">lead music technology at UWE Bristol</a>.</dd></div>
+      </dl>
+
       <div class="hero-links">
         <a href="#works">Catalogue of works</a>
         <a href="https://soundcloud.com/maxcharlesdavies">SoundCloud</a>
@@ -310,8 +322,8 @@ footer{padding:2rem 0 3rem;color:var(--muted);font-size:var(--step--1)}
           <p>Teaching and leadership are as central to my working life as composing: I <a href="#teaching">lead the Audio and Music Technologies subject area</a> at UWE Bristol, and I've taught composition for more than twenty years.</p>
         </div>
       </div>
-      <aside class="aside" aria-label="At a glance">
-        <h3>At a glance</h3>
+      <aside class="aside" aria-label="Training and roles">
+        <h3>Training and roles</h3>
         <ul>
           <li><a href="https://people.uwe.ac.uk/Person/MaxwellDavies">Associate Director, Audio and Music Technologies, UWE Bristol</a></li>
           <li>PGCert in Academic Professional Practice and Fellow of the Higher Education Academy</li>
