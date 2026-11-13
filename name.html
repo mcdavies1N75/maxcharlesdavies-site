@@ -296,7 +296,7 @@ body{padding-bottom:4.5rem}
         <ol>
           <li>Each letter takes the first note name that begins with it, reading a table of naming systems (English, German, Swedish, Dutch, solfège and Byzantine) left to right, top to bottom. I stop at the Byzantine row, because by then every letter that can appear has appeared, so the Japanese and Indian systems further down add nothing new. So H is the German name for B, M is <i>Mi</i> (E), R is <i>Re</i> (D) and V is the Byzantine <i>Vu</i> (E).</li>
           <li>Where a letter hides inside a note name, I use that: S is always E♭ (<i>eS</i>, the German name), O is <i>sOh</i> (G), U is <i>Ut</i> (C) and Y is <i>reY</i> (D).</li>
-          <li>I is <i>mI</i> (E) or <i>tI</i> (B), whichever hasn't been heard yet in the name. If both or neither have, it avoids repeating the note just before it. Only if that doesn't decide it do you choose.</li>
+          <li>I is <i>mI</i> (E) or <i>tI</i> (B), whichever hasn't been heard yet in the name, as long as it doesn't repeat the note on either side of it. If both or neither have been heard, it takes whichever avoids repeating a neighbouring note. Only if that doesn't decide it do you choose.</li>
           <li>The last four letters follow the same thinking. J began as a form of I, so it follows I's rule. Q is sounded as K, so it takes <i>Ke</i> (A). W is a double U, so it takes <i>Ut</i> (C). A double sharp is written as a small x, so X takes a sharpened note: F♯.</li>
         </ol>
         <p>Under each note you'll see the note name it came from, with the matched letter in capitals.</p>
@@ -347,19 +347,30 @@ const NameMusic = (function(){
     return text.normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().replace(/[^A-Z\s]/g,'').split(/\s+/).filter(Boolean);
   }
   // Work out every letter's pitch. choices: wild letters by letter ({X:'F#'}), undecided I's by occurrence ({'I#0':'B'}).
-  // I rule: mI (E) or tI (B), whichever hasn't been heard yet in the name. If both or neither have,
-  // avoid repeating the note just before it. Only if that doesn't decide it is it a choice.
+  // I rule: mI (E) or tI (B), whichever hasn't been heard yet in the name, as long as it doesn't
+  // repeat the note on either side of it. If both or neither have been heard, take the one that avoids
+  // repeating a neighbour. Only if that doesn't decide it is it a choice.
   function analyse(ws, choices){
     const heard = new Set(); let iCount = 0, prev = null;
+    const flat = ws.flatMap(w => [...w]); let pos = 0;
+    const nm = n => n === 'E' ? 'E' : 'B';
     return ws.map(w => ({word:w, notes:[...w].map(ch => {
-      let r;
+      let r; const nextCh = flat[pos + 1]; pos++;
+      const next = nextCh && nextCh !== 'I' && nextCh !== 'J' && MAP[nextCh] ? MAP[nextCh][0] : null;
       if (ch === 'I' || ch === 'J') { // J began as a form of I, so it follows I's rule
-        const key = 'I#' + (iCount++), e = heard.has('E'), b = heard.has('B');
-        if (e && !b) r = {p:'B', label:'tI', auto:true};
-        else if (b && !e) r = {p:'E', label:'mI', auto:true};
-        else if (prev === 'E') r = {p:'B', label:'tI', auto:true};
-        else if (prev === 'B') r = {p:'E', label:'mI', auto:true};
-        else { const p = choices[key]; r = {p: p || null, label: p ? I_OPTS[p] : '?', wild: !p, chosen: !!p, iKey:key, both:e && b, hasPrev: prev !== null}; }
+        const key = 'I#' + (iCount++);
+        const unheard = ['E','B'].filter(p => !heard.has(p));
+        const clean = ['E','B'].filter(p => p !== prev && p !== next);
+        let pick = null, reason = '';
+        if (unheard.length === 1) {
+          if (clean.includes(unheard[0])) pick = unheard[0];
+          else reason = `${unheard[0]} hasn't been heard yet, but it would repeat the note ${unheard[0] === prev ? 'before' : 'after'} it`;
+        } else {
+          if (clean.length === 1) pick = clean[0];
+          else reason = (unheard.length ? 'neither E nor B has been heard yet' : 'E and B have both been heard already') + (clean.length ? (prev !== null || next !== null ? ', and neither would repeat a neighbouring note' : '') : ', and both would repeat a neighbouring note');
+        }
+        if (pick) r = {p:pick, label: pick === 'E' ? 'mI' : 'tI', auto:true};
+        else { const p = choices[key]; r = {p: p || null, label: p ? I_OPTS[p] : '?', wild: !p, chosen: !!p, iKey:key, reason}; }
       } else if (MAP[ch]) r = {p:MAP[ch][0], label:MAP[ch][1]};
       else { const p = choices[ch]; r = {p: p || null, label: p ? pretty(p) : '?', wild: !p, chosen: !!p}; }
       r.ch = ch; r.word = w; if (r.p) heard.add(r.p); prev = r.p; return r;
@@ -478,7 +489,7 @@ const NameMusic = (function(){
     const ord = ['first','second','third','fourth','fifth'];
     an.forEach(w => { const is = w.notes.filter(r => r.ch === 'I' || r.ch === 'J'); is.forEach((r, k) => { const same = is.filter(q => q.ch === r.ch); const n = same.indexOf(r); r.which = same.length > 1 ? `The ${ord[n] || (n + 1) + 'th'} ${r.ch} in ${cap(w.word)}` : `${r.ch} in ${cap(w.word)}`; }); });
     all.filter(r => r.iKey && (r.wild || r.chosen)).forEach(r => {
-      const why = (r.both ? 'E and B have both been heard already' : 'neither E nor B has been heard yet') + (r.hasPrev ? ', and the note before is neither' : '');
+      const why = r.reason;
       html += `<div class="choice${choices[r.iKey] ? '' : ' open'}"><label for="pick-${r.iKey.replace('#','-')}">${r.which}: ${why}. Would you like <i>mI</i> (E) or <i>tI</i> (B)?</label>
         <select id="pick-${r.iKey.replace('#','-')}" data-key="${r.iKey}"><option value="">Choose</option><option value="E"${choices[r.iKey] === 'E' ? ' selected' : ''}>mI (E)</option><option value="B"${choices[r.iKey] === 'B' ? ' selected' : ''}>tI (B)</option></select></div>`;
     });
